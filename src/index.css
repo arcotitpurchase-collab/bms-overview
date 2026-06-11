@@ -1,20 +1,164 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-  
+:root {
+  --color-strong-blue: #004AAD;
+  --color-dark-navy: #081F5C;
+  --color-navy-hover: #05143C;
+  --color-blue-hover: #003b8a;
+  --color-white: #FFFFFF;
+}
+
 html,
 body,
 #root {
   font-family: "Inter", sans-serif;
+  background-color: var(--color-white);
+  color: var(--color-dark-navy);
+  margin: 0;
+  padding: 0;
 }
 
+/* Remove underlines from all link/text anchor tags */
 a,
 a:hover,
 a:focus,
-a:visited {
-  text-decoration: none;
+a:visited,
+.no-underline {
+  text-decoration: none !important;
+}
+
+/* Hover Lift Effect */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(8, 31, 92, 0.15);
+}
+
+/* Flow line pulse styles */
+.flow-line-vertical {
+  position: relative;
+  width: 4px;
+  background-color: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.flow-pulse-vertical {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 74, 173, 0.3),
+    #00E5FF, /* cyan animation highlight */
+    rgba(0, 74, 173, 0.3),
+    transparent
+  );
+  animation: flowDown 2s infinite linear;
+}
+
+.flow-line-horizontal {
+  position: relative;
+  height: 4px;
+  background-color: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.flow-pulse-horizontal {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 74, 173, 0.3),
+    #00E5FF, /* cyan animation highlight */
+    rgba(0, 74, 173, 0.3),
+    transparent
+  );
+  animation: flowRight 2s infinite linear;
+}
+
+/* Animations */
+@keyframes flowDown {
+  0% {
+    top: -30px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes flowRight {
+  0% {
+    left: -40px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Busbar glow style */
+.busbar-glow-bg {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-dark-navy);
+  border: 2px solid var(--color-strong-blue);
+}
+
+.busbar-glow-element {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 229, 255, 0.1), /* cyan highlight */
+    rgba(255, 255, 255, 0.25), /* white glow */
+    rgba(0, 229, 255, 0.1),
+    transparent
+  );
+  animation: busbarGlowTravel 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes busbarGlowTravel {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Custom scrollbar to match our premium look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

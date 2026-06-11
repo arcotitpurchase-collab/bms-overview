@@ -1,125 +1,43 @@
-// import { Link, useParams } from "react-router-dom";
-// import { ArrowLeft, Fan, Lightbulb, Gauge, Thermometer, Zap } from "lucide-react";
-// import { clients } from "../data/bmsData";
-
-// function MetricRow({ label, value, tone = "default" }) {
-//   const valueClass = tone === "healthy" ? "text-emerald-600" : "text-blue-950";
-
-//   return (
-//     <div className="flex items-center justify-between border-t border-slate-100 py-3 text-sm">
-//       <span className="font-semibold text-slate-500">{label}</span>
-//       <strong className={`font-black ${valueClass}`}>{value}</strong>
-//     </div>
-//   );
-// }
-
-// export default function ClientOverview() {
-//   const { buildingId, floorId, clientId } = useParams();
-//   const clientName = clients[Number(clientId) - 1] || "Client";
-
-//   return (
-//     <main className="min-h-screen bg-slate-100 px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
-//       <header className="mx-auto mb-6 flex max-w-7xl flex-col gap-4 rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10 md:flex-row md:items-center">
-//         <Link
-//           to={`/building/${buildingId}/floor/${floorId}`}
-//           className="inline-flex w-fit items-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-black text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200"
-//         >
-//           <ArrowLeft className="h-5 w-5" /> Back
-//         </Link>
-
-//         <div>
-//           <p className="mb-2 text-xs font-black uppercase tracking-widest text-blue-700">Client Monitoring</p>
-//           <h1 className="mb-2 text-3xl font-black text-blue-950 sm:text-4xl">{clientName}</h1>
-//           <span className="text-sm font-semibold text-slate-500 sm:text-base">
-//             {buildingId.toUpperCase()} / Floor {floorId}
-//           </span>
-//         </div>
-//       </header>
-
-//       <section className="mx-auto mb-6 flex max-w-7xl flex-col gap-4 rounded-2xl bg-blue-700 p-6 text-white shadow-xl shadow-blue-950/20 sm:flex-row sm:items-center sm:justify-between">
-//         <div>
-//           <p className="mb-2 text-xs font-black uppercase tracking-widest text-blue-100">Current Status</p>
-//           <h2 className="text-2xl font-black">All Systems Healthy</h2>
-//         </div>
-//         <span className="inline-flex w-fit rounded-full bg-white px-4 py-2 text-sm font-black text-blue-700">
-//           LIVE
-//         </span>
-//       </section>
-
-//       <section className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 xl:grid-cols-3">
-//         <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10">
-//           <Fan className="mb-4 h-10 w-10 text-blue-700" />
-//           <h3 className="mb-3 text-xl font-black text-blue-950">AHU / Chillers</h3>
-//           <MetricRow label="AHU-1" value="Running" tone="healthy" />
-//           <MetricRow label="AHU-2" value="Running" tone="healthy" />
-//           <MetricRow label="Supply Temp" value="22°C" />
-//           <MetricRow label="Humidity" value="48%" />
-//         </div>
-
-//         <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10">
-//           <Lightbulb className="mb-4 h-10 w-10 text-blue-700" />
-//           <h3 className="mb-3 text-xl font-black text-blue-950">LDB / Lighting</h3>
-//           <MetricRow label="Zone A" value="ON" />
-//           <MetricRow label="Zone B" value="ON" />
-//           <MetricRow label="Zone C" value="OFF" />
-//           <MetricRow label="Lighting Load" value="64%" />
-//         </div>
-
-//         <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10">
-//           <Gauge className="mb-4 h-10 w-10 text-blue-700" />
-//           <h3 className="mb-3 text-xl font-black text-blue-950">EMS / Energy</h3>
-//           <MetricRow label="kWh" value="2,430" />
-//           <MetricRow label="kW" value="128" />
-//           <MetricRow label="PF" value="0.96" />
-//           <MetricRow label="Voltage" value="415V" />
-//           <MetricRow label="Current" value="186A" />
-//         </div>
-
-//         <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10">
-//           <Thermometer className="mb-4 h-10 w-10 text-blue-700" />
-//           <h3 className="mb-3 text-xl font-black text-blue-950">Comfort Status</h3>
-//           <MetricRow label="Room Temp" value="23°C" />
-//           <MetricRow label="CO₂" value="620 ppm" />
-//           <MetricRow label="Air Quality" value="Good" tone="healthy" />
-//         </div>
-
-//         <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/10">
-//           <Zap className="mb-4 h-10 w-10 text-blue-700" />
-//           <h3 className="mb-3 text-xl font-black text-blue-950">Power Quality</h3>
-//           <MetricRow label="Frequency" value="50 Hz" />
-//           <MetricRow label="Demand" value="142 kVA" />
-//           <MetricRow label="Alarm" value="None" tone="healthy" />
-//         </div>
-//       </section>
-//     </main>
-//   );
-// }
-
-
-
-
+import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Fan, Lightbulb, Gauge, Thermometer, Zap } from "lucide-react";
+import { ArrowLeft, Fan, Lightbulb, Gauge, Thermometer, Zap, Cpu, CheckCircle } from "lucide-react";
 import { clients } from "../data/bmsData";
 
 function MetricRow({ label, value, tone = "default" }) {
-  const valueClass = tone === "healthy" ? "text-cyan-200" : "text-white";
+  const valueClass = tone === "healthy" ? "text-emerald-400" : "text-white";
 
   return (
-    <div className="flex items-center justify-between border-t border-white/20 py-3 text-sm">
-      <span className="font-medium text-blue-100">{label}</span>
-      <strong className={`font-black ${valueClass}`}>{value}</strong>
+    <div className="flex items-center justify-between border-b border-blue-900/30 py-3 text-sm">
+      <span className="font-semibold text-blue-200">{label}</span>
+      <strong className={`font-extrabold ${valueClass} text-base`}>{value}</strong>
     </div>
   );
 }
 
-function BluePanel({ children, className = "" }) {
+function InstrumentPanel({ title, icon: Icon, children }) {
   return (
-    <div
-      className={`relative overflow-hidden border border-blue-800/30 bg-gradient-to-br from-[#082B7A] via-[#004AAD] to-[#0B5ED7] p-6 text-white shadow-[0_20px_45px_rgba(0,74,173,0.35)] ${className}`}
-    >
-      <div className="absolute inset-x-0 top-0 h-[3px] bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,1)]" />
-      {children}
+    <div className="bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
+      {/* Decorative metal panel top line */}
+      <div className="absolute top-0 inset-x-0 h-[3px] bg-[#004AAD]" />
+      
+      <div>
+        <div className="flex items-center gap-3 mb-5 border-b border-blue-900/50 pb-3">
+          <div className="bg-[#05143C] p-2 border border-[#004AAD] rounded text-[#00E5FF]">
+            <Icon className="h-6 w-6" />
+          </div>
+          <h3 className="text-lg font-black tracking-widest uppercase">{title}</h3>
+        </div>
+        <div className="space-y-1">
+          {children}
+        </div>
+      </div>
+      
+      <div className="mt-6 border-t border-blue-900/40 pt-3 flex items-center justify-between">
+        <span className="text-[9px] font-bold text-blue-300 uppercase">FEEDER TELEMETRY</span>
+        <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> ONLINE
+        </span>
+      </div>
     </div>
   );
 }
@@ -129,91 +47,123 @@ export default function ClientOverview() {
   const clientName = clients[Number(clientId) - 1] || "Client";
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#f4f9ff] via-white to-[#eef6ff] px-0 py-0 text-[#0B2545]">
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#081F5C] via-[#004AAD] to-[#2563EB] px-8 py-5 text-white shadow-lg">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center">
-          <Link
-            to={`/building/${buildingId}/floor/${floorId}`}
-            className="inline-flex w-fit items-center gap-2 bg-white px-4 py-3 text-sm font-black text-[#004AAD]"
-          >
-            <ArrowLeft className="h-5 w-5" /> Back
-          </Link>
-
-          <div>
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-blue-100">
-              Client Monitoring
-            </p>
-            <h1 className="mb-1 text-3xl font-black text-white sm:text-4xl">
-              {clientName}
-            </h1>
-            <span className="text-sm font-medium text-blue-100">
-              {buildingId.toUpperCase()} / Floor {floorId}
+    <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
+      
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-[#081F5C] border-b-4 border-[#004AAD] px-6 py-4 text-white shadow-md">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center gap-4 justify-between">
+          <div className="flex items-center gap-4">
+            <Link
+              to={`/building/${buildingId}/floor/${floorId}`}
+              className="inline-flex items-center gap-2 bg-[#004AAD] hover:bg-[#003b8a] text-white border border-blue-400 px-4 py-2.5 text-xs font-black transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" /> BACK
+            </Link>
+            <div>
+              <p className="text-[9px] font-black tracking-[0.3em] text-blue-300 uppercase">
+                SCADA Client Console
+              </p>
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
+                {clientName}
+              </h1>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3.5 py-1.5 text-xs font-extrabold tracking-wider text-white">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              {buildingId.toUpperCase()} - LEVEL {floorId}
             </span>
           </div>
         </div>
       </header>
 
-      <section className="w-full px-8 py-8">
-        <div className="mx-auto max-w-7xl">
-          <section className="mb-6 bg-gradient-to-r from-[#081F5C] via-[#004AAD] to-[#2563EB] p-6 text-white shadow-[0_14px_35px_rgba(0,74,173,0.25)] sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-blue-100">
-                Current Status
-              </p>
-              <h2 className="text-2xl font-black text-white">All Systems Healthy</h2>
+      {/* Main content */}
+      <section className="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
+        
+        {/* Status Banner */}
+        <div className="bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-xl mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#05143C] p-3 border border-blue-900 rounded-full text-emerald-400">
+              <CheckCircle className="h-7 w-7" />
             </div>
-            <span className="mt-4 inline-flex w-fit bg-cyan-300 px-4 py-2 text-sm font-black text-[#081F5C] shadow-[0_0_18px_rgba(34,211,238,0.8)] sm:mt-0">
-              LIVE
-            </span>
-          </section>
-
-          <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            <BluePanel>
-              <Fan className="mb-4 h-10 w-10 text-cyan-200" />
-              <h3 className="mb-3 text-xl font-black text-white">AHU / Chillers</h3>
-              <MetricRow label="AHU-1" value="Running" tone="healthy" />
-              <MetricRow label="AHU-2" value="Running" tone="healthy" />
-              <MetricRow label="Supply Temp" value="22°C" />
-              <MetricRow label="Humidity" value="48%" />
-            </BluePanel>
-
-            <BluePanel>
-              <Lightbulb className="mb-4 h-10 w-10 text-cyan-200" />
-              <h3 className="mb-3 text-xl font-black text-white">LDB / Lighting</h3>
-              <MetricRow label="Zone A" value="ON" />
-              <MetricRow label="Zone B" value="ON" />
-              <MetricRow label="Zone C" value="OFF" />
-              <MetricRow label="Lighting Load" value="64%" />
-            </BluePanel>
-
-            <BluePanel>
-              <Gauge className="mb-4 h-10 w-10 text-cyan-200" />
-              <h3 className="mb-3 text-xl font-black text-white">EMS / Energy</h3>
-              <MetricRow label="kWh" value="2,430" />
-              <MetricRow label="kW" value="128" />
-              <MetricRow label="PF" value="0.96" />
-              <MetricRow label="Voltage" value="415V" />
-              <MetricRow label="Current" value="186A" />
-            </BluePanel>
-
-            <BluePanel>
-              <Thermometer className="mb-4 h-10 w-10 text-cyan-200" />
-              <h3 className="mb-3 text-xl font-black text-white">Comfort Status</h3>
-              <MetricRow label="Room Temp" value="23°C" />
-              <MetricRow label="CO₂" value="620 ppm" />
-              <MetricRow label="Air Quality" value="Good" tone="healthy" />
-            </BluePanel>
-
-            <BluePanel>
-              <Zap className="mb-4 h-10 w-10 text-cyan-200" />
-              <h3 className="mb-3 text-xl font-black text-white">Power Quality</h3>
-              <MetricRow label="Frequency" value="50 Hz" />
-              <MetricRow label="Demand" value="142 kVA" />
-              <MetricRow label="Alarm" value="None" tone="healthy" />
-            </BluePanel>
-          </section>
+            <div>
+              <span className="text-[10px] font-black text-blue-300 tracking-wider block uppercase">SYSTEM INTEGRITY LOG</span>
+              <h2 className="text-2xl font-black mt-0.5">All Subsystems Operational</h2>
+            </div>
+          </div>
+          <span className="bg-[#004AAD] border border-blue-400 text-white text-xs font-black px-4 py-2 tracking-widest uppercase inline-block text-center shadow">
+            LIVE FEEDS
+          </span>
         </div>
+
+        {/* 5 Instrument Panels Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          
+          {/* AHU / Chillers */}
+          <InstrumentPanel title="AHU / Chillers" icon={Fan}>
+            <MetricRow label="AHU-1 State" value="Running" tone="healthy" />
+            <MetricRow label="AHU-2 State" value="Running" tone="healthy" />
+            <MetricRow label="Chilled Water Supply Temp" value="22°C" />
+            <MetricRow label="Return Loop Humidity" value="48%" />
+          </InstrumentPanel>
+
+          {/* LDB / Lighting */}
+          <InstrumentPanel title="LDB / Lighting" icon={Lightbulb}>
+            <MetricRow label="Lighting Zone A" value="ON" />
+            <MetricRow label="Lighting Zone B" value="ON" />
+            <MetricRow label="Lighting Zone C" value="OFF" />
+            <MetricRow label="Lighting Board Load" value="64%" />
+          </InstrumentPanel>
+
+          {/* EMS / Energy */}
+          <InstrumentPanel title="EMS / Energy" icon={Gauge}>
+            <MetricRow label="Active Energy Draw" value="2,430 kWh" />
+            <MetricRow label="Real-time Demand" value="128 kW" />
+            <MetricRow label="Current Power Factor" value="0.96" />
+            <MetricRow label="Bus Voltage Supply" value="415 V" />
+            <MetricRow label="Average Current Draw" value="186 A" />
+          </InstrumentPanel>
+
+          {/* Comfort Status */}
+          <InstrumentPanel title="Comfort Status" icon={Thermometer}>
+            <MetricRow label="Ambient Room Temp" value="23°C" />
+            <MetricRow label="CO₂ Concentration" value="620 ppm" />
+            <MetricRow label="Air Quality Index (AQI)" value="Good" tone="healthy" />
+          </InstrumentPanel>
+
+          {/* Power Quality */}
+          <InstrumentPanel title="Power Quality" icon={Zap}>
+            <MetricRow label="Grid Frequency" value="50 Hz" />
+            <MetricRow label="Apparent Demand" value="142 kVA" />
+            <MetricRow label="System Fault Alarm" value="None" tone="healthy" />
+          </InstrumentPanel>
+
+        </div>
+
+        {/* Diagnostics helper info */}
+        <div className="mt-8 bg-[#05143C] border-l-4 border-[#004AAD] p-5 text-white">
+          <h4 className="font-extrabold text-sm text-white flex items-center gap-2">
+            <Cpu className="h-4 w-4 text-[#00E5FF]" /> SCADA INSTRUMENTS DIAGNOSTIC
+          </h4>
+          <p className="text-xs text-blue-200 mt-2 leading-relaxed">
+            Telemetry is polled continuously. This panel displays localized electrical distribution data specifically isolated to the {clientName} console grid. Report anomalies directly to the facility command desk.
+          </p>
+        </div>
+
       </section>
+
+      {/* Footer System Diagnostics */}
+      <footer className="bg-slate-100 border-t border-slate-200 py-6 px-6 text-slate-500 text-xs">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-center gap-4 font-semibold">
+          <p>© 2026 Arcot Industries. All systems operational.</p>
+          <div className="flex items-center gap-2 text-emerald-600">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Telemetry Calibrated</span>
+          </div>
+        </div>
+      </footer>
+      
     </main>
   );
 }
