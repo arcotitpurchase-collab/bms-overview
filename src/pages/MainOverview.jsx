@@ -1,9 +1,789 @@
+// import React, { useState } from "react";
+// import { Link } from "react-router-dom";
+// import { Zap, Gauge, Activity, Cpu, ArrowDown, ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
+// import aiLogo from "../assets/AI LOGO.png";
+
+
+// export default function MainOverview() {
+//   const [transformersExpanded, setTransformersExpanded] = useState(false);
+
+//   const outgoing = [
+//     { name: "OG-1", transformer: "TR-1" },
+//     { name: "OG-2", transformer: "TR-2" },
+//     { name: "OG-3", transformer: "TR-3" },
+//     { name: "OG-4", transformer: "TR-4" },
+//     { name: "OG-5", transformer: "TR-5" },
+//     { name: "OG-6", transformer: "TR-6" },
+//   ];
+
+//   const transformers = [
+//     { id: "TR-1", oilTemp: "54°C", windingTemp: "61°C", buchholz: "Healthy", load: "68%" },
+//     { id: "TR-2", oilTemp: "52°C", windingTemp: "59°C", buchholz: "Healthy", load: "62%" },
+//     { id: "TR-3", oilTemp: "55°C", windingTemp: "60°C", buchholz: "Healthy", load: "71%" },
+//     { id: "TR-4", oilTemp: "53°C", windingTemp: "58°C", buchholz: "Healthy", load: "65%" },
+//     { id: "TR-5", oilTemp: "56°C", windingTemp: "63°C", buchholz: "Healthy", load: "74%" },
+//     { id: "TR-6", oilTemp: "51°C", windingTemp: "57°C", buchholz: "Healthy", load: "60%" },
+//   ];
+
+//   // Helper component for animated vertical lines
+//   const VerticalConnector = ({ height = "h-12", label = "" }) => (
+//     <div className="flex flex-col items-center w-full">
+//       <div className={`flow-line-vertical ${height}`}>
+//         <div className="flow-pulse-vertical" />
+//       </div>
+//       {label && (
+//         <span className="text-[10px] font-300 tracking-widest uppercase text-[#004AAD] mt-1">
+//           {label}
+//         </span>
+//       )}
+//     </div>
+//   );
+
+//   // Helper component for busbar equipment blocks
+//   const BusbarBlock = ({ name, voltage }) => (
+//     <div className="w-full max-w-4xl mx-auto my-4 busbar-glow-bg border-2 border-[#004AAD] p-4 text-center rounded shadow-lg relative">
+//       <div className="busbar-glow-element" />
+//       <div className="relative z-10 flex items-center justify-between px-6">
+//         <div className="flex items-center gap-2">
+//           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+//           <span className="text-xs font-300 text-blue-200 tracking-wider">SYSTEM BUSBAR ACTIVE</span>
+//         </div>
+//         <h3 className="text-xl font-300 text-white tracking-widest">{name}</h3>
+//         <span className="bg-[#004AAD] border border-blue-400 text-white text-xs font-300 px-3 py-1 rounded">
+//           {voltage}
+//         </span>
+//       </div>
+//     </div>
+//   );
+
+//   const [kiosksExpanded, setKiosksExpanded] = useState(false);
+//   const [busbarsExpanded, setBusbarsExpanded] = useState(false);
+
+//   // Helper component for building tower UI
+//   const BuildingTower = ({ id, name, floors, clients }) => (
+//     <Link
+//       to={`/building/${id}`}
+//       className="group flex flex-col md:flex-row items-center gap-6 bg-[#081F5C] border-2 border-[#004AAD] p-6 hover-lift text-white rounded shadow-xl w-full"
+//     >
+//       {/* Tower Graphic */}
+//       <div className="relative w-28 h-56 bg-[#05143C] border border-blue-900 rounded-t p-2 flex flex-col justify-between overflow-hidden shadow-inner shrink-0">
+//         {/* Sky antenna */}
+//         <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[2px] h-6 bg-[#004AAD]">
+//           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+//         </div>
+
+//         {/* Helipad glow */}
+//         <div className="h-[2px] w-full bg-[#004AAD] shadow-[0_0_10px_#00E5FF]" />
+
+//         {/* Windows layout representing 20 floors */}
+//         <div className="grid grid-cols-4 gap-1.5 h-44 overflow-hidden py-1">
+//           {Array.from({ length: 48 }).map((_, idx) => (
+//             <span
+//               key={idx}
+//               className="h-2 rounded-sm transition-colors duration-300 bg-white/10 group-hover:bg-[#00E5FF]/40 shadow-[0_0_2px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_4px_rgba(0,229,255,0.4)]"
+//             />
+//           ))}
+//         </div>
+
+//         {/* Tower Base */}
+//         <div className="h-2 w-full bg-[#004AAD]" />
+//       </div>
+
+//       {/* Info details */}
+//       <div className="flex-1 text-center md:text-left">
+//         <span className="text-[10px] font-300 tracking-widest text-blue-300 uppercase">
+//           Digital Twin Node
+//         </span>
+//         <h3 className="text-2xl font-300 text-white tracking-wide mt-1 group-hover:text-blue-200 transition-colors">
+//           {name}
+//         </h3>
+//         <div className="mt-3 grid grid-cols-2 gap-2 text-left">
+//           <div className="bg-[#05143C] p-2 border border-blue-950">
+//             <span className="text-[9px] text-blue-300 font-300 block">HEIGHT</span>
+//             <strong className="text-sm font-extrabold">{floors} FLOORS</strong>
+//           </div>
+//           <div className="bg-[#05143C] p-2 border border-blue-950">
+//             <span className="text-[9px] text-blue-300 font-300 block">TENANTS</span>
+//             <strong className="text-sm font-300">{clients} ZONES</strong>
+//           </div>
+//         </div>
+//         {/* <p className="mt-3 text-xs text-blue-100 font-medium leading-relaxed">
+//           Click tower console to view floor blueprints and active HVAC / EMS energy telemetry.
+//         </p>
+//         <span className="mt-4 inline-flex items-center gap-1 bg-[#004AAD] text-white text-xs font-black px-4 py-2 hover:bg-[#003b8a] transition-colors border border-blue-400">
+//           ENTER CONSOLE
+//         </span> */}
+//       </div>
+//     </Link>
+//   );
+
+//   return (
+//     <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
+
+//       {/* SCADA Top Navigation Bar */}
+//       {/* <header className="sticky top-0 z-50 bg-[#081F5C] border-b-4 border-[#004AAD] px-6 py-4 text-white shadow-md">
+//         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-center gap-4">
+//           <div className="flex items-center gap-3">
+//             <div className="bg-[#004AAD] p-2 rounded shadow">
+//               <Cpu className="h-6 w-6 text-white" />
+//             </div>
+//             <div>
+//               <p className="text-[9px] font-black tracking-[0.3em] text-blue-300 uppercase">
+//                 Enterprise Building Management System
+//               </p>
+//               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
+//                 BMS Command Control Overview
+//               </h1>
+//             </div>
+//           </div>
+//           <div className="flex items-center gap-3">
+//             <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3.5 py-1.5 text-xs font-extrabold tracking-wider text-white">
+//               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+//               SCADA CONNECTED
+//             </span>
+//           </div>
+//         </div>
+//       </header> */}
+
+
+// <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
+//   <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
+
+//     {/* Left Side */}
+//     <div className="flex items-center gap-3">
+//    <img
+//   src={aiLogo}
+//   alt="AI Logo"
+//   className="h-28 w-28 object-contain -my-6"
+//  />
+
+//       <h1 className="text-lg font-semibold tracking-tight text-white uppercase leading-none">
+//         BMS Command Control Overview
+//       </h1>
+//     </div>
+
+//     {/* Right Side */}
+//     <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1 text-[10px] font-bold tracking-wider text-white">
+//       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+//       SCADA CONNECTED
+//     </span>
+
+//   </div>
+// </header>
+
+
+
+//       {/* Main Single Line Diagram Console */}
+//       <section className="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
+//         <div className="bg-slate-50 border border-slate-200 p-6 md:p-10 shadow-inner rounded-lg">
+
+//           {/* Section Heading */}
+//           <div className="mb-8 border-b-2 border-slate-200 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+//             <div>
+//               <h2 className="text-xl font-black text-[#081F5C] tracking-wide uppercase">
+//                 Electrical Mimic Single Line Diagram (SLD)
+//               </h2>
+//               <p className="text-xs text-slate-500 font-semibold mt-1">
+//                 Visualizing physical power distribution path from incoming utility feeders to end-user tenants.
+//               </p>
+//             </div>
+//             <strong className="text-xs bg-[#081F5C] text-white px-3 py-1 font-bold">33kV / 433V GRID</strong>
+//           </div>
+
+//           {/* 1. SOURCE SECTION */}
+//           <div className="max-w-3xl mx-auto bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
+//             <div className="absolute top-3 right-3 flex gap-2">
+//               <span className="flex items-center gap-1 bg-[#05143C] border border-emerald-500 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded shadow-[0_0_8px_rgba(52,211,153,0.2)]">
+//                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+//                 ONLINE
+//               </span>
+//             </div>
+
+//             <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
+//               <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">CENTRAL CONTROL PANEL</span>
+//               <h3 className="text-2xl font-black mt-1 text-white tracking-widest">33kV SOURCE PANELS</h3>
+//               <p className="text-xs text-blue-200 mt-1 font-semibold">Dual high-tension grid utility connection monitoring node</p>
+//             </div>
+
+//             <div className="grid gap-4 md:grid-cols-2">
+//               {/* Feeder 1 */}
+//               <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative">
+//                 <div className="flex justify-between items-start">
+//                   <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 1 (MAINGRID)</span>
+//                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
+//                 </div>
+//                 <div className="mt-2 flex items-center gap-3">
+//                   <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
+//                     <Zap className="h-5 w-5 text-emerald-400" />
+//                   </div>
+//                   <div>
+//                     <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
+//                     <span className="text-[10px] font-bold text-emerald-400">ACTIVE FEEDER</span>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Feeder 2 */}
+//               <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative opacity-90">
+//                 <div className="flex justify-between items-start">
+//                   <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 2 (DG STANDBY)</span>
+//                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block shadow-[0_0_6px_#fbbf24]" />
+//                 </div>
+//                 <div className="mt-2 flex items-center gap-3">
+//                   <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
+//                     <Zap className="h-5 w-5 text-amber-400" />
+//                   </div>
+//                   <div>
+//                     <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
+//                     <span className="text-[10px] font-bold text-amber-300">STANDBY MODE</span>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* SVG Animated Split Lines (Source -> Incomings) */}
+//           <div className="w-full max-w-4xl mx-auto h-16 relative">
+//             <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+//               <defs>
+//                 <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+//                   <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#00E5FF" />
+//                 </marker>
+//               </defs>
+//               {/* Static Background Path */}
+//               <path d="M 400 0 V 32 H 200 V 64 M 400 32 H 600 V 64" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+//               {/* Animated Flow Path Left */}
+//               <path d="M 400 0 V 32 H 200 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan)" />
+//               {/* Animated Flow Path Right */}
+//               <path d="M 400 0 V 32 H 600 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan)" />
+//             </svg>
+//           </div>
+
+//           {/* 2. INCOMING SECTION (Side-by-Side) */}
+//           <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+//             {/* Incoming 1 */}
+//             <div className="bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md relative panel-active-glow rounded-md">
+//               <div className="absolute top-2 right-2">
+//                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
+//               </div>
+//               <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">FEEDER BREAKER 1</span>
+//               <h4 className="text-lg font-black mt-1 text-white">Incoming 1</h4>
+
+//               <div className="mt-4 grid grid-cols-2 gap-2 bg-[#05143C] p-3 border border-blue-900">
+//                 <div>
+//                   <span className="text-[9px] text-blue-300 font-bold block">VOLTAGE</span>
+//                   <strong className="text-sm font-extrabold text-white">33.0 kV</strong>
+//                 </div>
+//                 <div>
+//                   <span className="text-[9px] text-blue-300 font-bold block">BREAKER</span>
+//                   <strong className="text-sm font-extrabold text-emerald-400">CLOSED / ON</strong>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Incoming 2 */}
+//             <div className="bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md relative panel-active-glow rounded-md">
+//               <div className="absolute top-2 right-2">
+//                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
+//               </div>
+//               <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">FEEDER BREAKER 2</span>
+//               <h4 className="text-lg font-black mt-1 text-white">Incoming 2</h4>
+
+//               <div className="mt-4 grid grid-cols-2 gap-2 bg-[#05143C] p-3 border border-blue-900">
+//                 <div>
+//                   <span className="text-[9px] text-blue-300 font-bold block">VOLTAGE</span>
+//                   <strong className="text-sm font-extrabold text-white">33.0 kV</strong>
+//                 </div>
+//                 <div>
+//                   <span className="text-[9px] text-blue-300 font-bold block">BREAKER</span>
+//                   <strong className="text-sm font-extrabold text-emerald-400">CLOSED / ON</strong>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* SVG Animated Merge Lines (Incomings -> Outgoing) */}
+//           <div className="w-full max-w-4xl mx-auto h-16 relative">
+//             <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+//               {/* Static Background Path */}
+//               <path d="M 200 0 V 32 H 400 V 64 M 600 0 V 32 H 400" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+//               {/* Animated Flow Path Left */}
+//               <path d="M 200 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan)" />
+//               {/* Animated Flow Path Right */}
+//               <path d="M 600 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan)" />
+//             </svg>
+//           </div>
+
+//           {/* 3. 33kV OUTGOING PANEL */}
+//           <div className="w-full max-w-4xl mx-auto my-2 busbar-glow-bg border-2 border-[#004AAD] p-5 text-center rounded shadow-lg relative panel-active-glow">
+//             <div className="busbar-glow-element" />
+//             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 gap-4">
+//               <div className="flex items-center gap-2">
+//                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+//                 <span className="text-xs font-black text-blue-200 tracking-wider">OUTGOING BUSBAR ENERGIZED</span>
+//               </div>
+//               <h3 className="text-xl font-black text-white tracking-widest">33kV OUTGOING</h3>
+//               <div className="flex gap-4">
+//                 <span className="bg-[#05143C] border border-[#004AAD] text-emerald-400 text-xs font-extrabold px-3 py-1 rounded">
+//                   33.0 kV
+//                 </span>
+//                 <span className="bg-[#05143C] border border-[#004AAD] text-white text-xs font-extrabold px-3 py-1 rounded">
+//                   50.0 Hz
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+
+//           <VerticalConnector height="h-10" label="Feeder Bus Connection" />
+
+//           {/* 4. 33kV FEEDER PANEL */}
+//           <div className="w-full max-w-5xl mx-auto my-4 bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
+//             <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
+//               <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">FEEDER SWITCHGEAR PANEL</span>
+//               <h3 className="text-xl font-black text-white tracking-widest mt-1">33kV FEEDER PANEL</h3>
+//             </div>
+
+//             {/* 1. INCOMING FEEDER Section */}
+//             <div className="mb-4">
+//               <div className="max-w-xs mx-auto bg-[#05143C] border border-[#004AAD] p-4 text-center rounded relative">
+//                 <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">INCOMING FEEDER</span>
+//                 <strong className="text-sm font-black text-white mt-1 block">INCOMING FEEDER 1</strong>
+//                 <div className="mt-2 flex items-center justify-center gap-1.5 text-emerald-400 text-xs font-bold">
+//                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+//                   CONNECTED / ACTIVE
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Animated Split SVG Flow Lines inside the panel */}
+//             <div className="w-full h-12 relative my-2">
+//               <svg className="w-full h-full overflow-visible" viewBox="0 0 960 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                 <defs>
+//                   <marker id="arrow-cyan-small" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+//                     <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+//                   </marker>
+//                 </defs>
+//                 {/* Background line bus split */}
+//                 <path d="M 480 0 V 16 H 80 V 48 M 80 16 H 240 V 48 M 240 16 H 400 V 48 M 400 16 H 560 V 48 M 560 16 H 720 V 48 M 720 16 H 880 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                
+//                 {/* Animated Flow Lines */}
+//                 <path d="M 480 0 V 16 H 80 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
+//                 <path d="M 480 0 V 16 H 240 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
+//                 <path d="M 480 0 V 16 H 400 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
+//                 <path d="M 480 0 V 16 H 560 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
+//                 <path d="M 480 0 V 16 H 720 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
+//                 <path d="M 480 0 V 16 H 880 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
+//               </svg>
+//             </div>
+
+//             {/* 2. OUTGOING FEEDERS Section (Grid of 6) */}
+//             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 mt-2">
+//               {outgoing.map((item) => (
+//                 <div
+//                   key={item.name}
+//                   className="bg-[#05143C] border border-[#004AAD] p-4 text-center text-white shadow rounded"
+//                 >
+//                   <span className="text-[9px] font-bold text-blue-300 block">FEEDER</span>
+//                   <strong className="text-lg font-black block tracking-wider mt-1">{item.name}</strong>
+//                   <p className="text-[10px] text-blue-100 font-bold mt-1">To {item.transformer}</p>
+//                   <div className="mt-3 flex items-center justify-center gap-1.5 text-emerald-400">
+//                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
+//                     <span className="text-xs font-black">ON</span>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Connectors to Transformers (Collapsed/Header Feed) */}
+//           {!transformersExpanded && (
+//             <VerticalConnector height="h-10" label="Transformer Feed" />
+//           )}
+
+//           {/* 6. 33/0.433kV TRANSFORMERS CENTRAL CARD */}
+//  <div className="flex justify-center w-full my-3">
+//   <div
+//     onClick={() => setTransformersExpanded(!transformersExpanded)}
+//     className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+//   >
+//     <div className="h-full flex flex-col items-center justify-center text-center">
+
+//       {/* Transformer Icon */}
+//       <svg
+//         className="w-16 h-10 text-blue-300 mb-2"
+//         viewBox="0 0 60 30"
+//         fill="none"
+//       >
+//         <circle
+//           cx="20"
+//           cy="15"
+//           r="12"
+//           stroke="currentColor"
+//           strokeWidth="2.5"
+//         />
+//         <circle
+//           cx="40"
+//           cy="15"
+//           r="12"
+//           stroke="currentColor"
+//           strokeWidth="2.5"
+//         />
+//       </svg>
+
+//       {/* Text */}
+//       <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+//         STEP-DOWN SUBSTATION
+//       </span>
+
+//       <h3 className="text-lg font-black text-white tracking-wider mt-1">
+//         33 / 0.433kV TRANSFORMERS
+//       </h3>
+
+//     </div>
+//   </div>
+// </div>
+
+//           {/* Expanded details container */}
+//         <div
+//   className={`transition-all duration-500 ease-in-out overflow-hidden ${
+//     transformersExpanded
+//       ? "max-h-[2000px] opacity-100"
+//       : "max-h-0 opacity-0 pointer-events-none"
+//   }`}
+// >
+//   {/* Flow from top transformer box */}
+//   <div className="flex justify-center h-10">
+//     <div className="flow-line-vertical h-full">
+//       <div className="flow-pulse-vertical" />
+//     </div>
+//   </div>
+
+//   {/* Transformer row */}
+//   <div className="max-w-7xl mx-auto px-4">
+
+//     {/* Horizontal bus without extra left/right line */}
+//     <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+//       <div className="flow-pulse-horizontal" />
+//     </div>
+
+//     {/* 6 Transformers in same line */}
+//     <div className="grid grid-cols-6 gap-4">
+//       {transformers.map((tf) => (
+//         <div key={tf.id} className="flex flex-col items-center">
+
+//           {/* Vertical drop line */}
+//           <div className="flow-line-vertical h-8">
+//             <div className="flow-pulse-vertical" />
+//           </div>
+
+//           {/* Transformer Card */}
+//           <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md flex flex-col justify-between rounded relative panel-active-glow min-h-[200px]">
+//             <div>
+//               <div className="mb-3 flex justify-center items-center">
+//                 <svg
+//                   className="w-14 h-8 text-blue-300"
+//                   viewBox="0 0 60 30"
+//                   fill="none"
+//                 >
+//                   <circle
+//                     cx="20"
+//                     cy="15"
+//                     r="12"
+//                     stroke="currentColor"
+//                     strokeWidth="2.5"
+//                   />
+//                   <circle
+//                     cx="40"
+//                     cy="15"
+//                     r="12"
+//                     stroke="currentColor"
+//                     strokeWidth="2.5"
+//                   />
+//                 </svg>
+//               </div>
+
+//               <strong className="text-base font-black block text-center tracking-widest">
+//                 {tf.id}
+//               </strong>
+
+//               <span className="text-[9px] font-bold text-blue-300 text-center block uppercase">
+//                 33kV / 433V TX
+//               </span>
+//             </div>
+
+//             <div className="mt-4 space-y-2 border-t border-blue-900 pt-3">
+//               <div className="flex justify-between items-center text-[10px]">
+//                 <span className="text-blue-200">Oil Temp:</span>
+//                 <span className="font-extrabold text-white">
+//                   {tf.oilTemp}
+//                 </span>
+//               </div>
+
+//               <div className="flex justify-between items-center text-[10px]">
+//                 <span className="text-blue-200">Wind Temp:</span>
+//                 <span className="font-extrabold text-white">
+//                   {tf.windingTemp}
+//                 </span>
+//               </div>
+
+//               <div className="flex justify-between items-center text-[10px]">
+//                 <span className="text-blue-200">Relay:</span>
+//                 <span className="font-extrabold text-emerald-400">
+//                   {tf.buchholz}
+//                 </span>
+//               </div>
+
+//               <div className="flex justify-between items-center text-[10px]">
+//                 <span className="text-blue-200">Load:</span>
+//                 <span className="font-extrabold text-white">
+//                   {tf.load}
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+
+//         </div>
+//       ))}
+//     </div>
+//   </div>
+// </div>
+
+//           {/* Stepped-Down Feed to LT Kiosk */}
+//           {transformersExpanded ? (
+//             <div className="w-full max-w-4xl mx-auto grid grid-cols-6 h-12 px-4">
+//               {Array.from({ length: 6 }).map((_, i) => (
+//                 <div key={i} className="flex justify-center h-full">
+//                   <div className="flow-line-vertical h-full">
+//                     <div className="flow-pulse-vertical" />
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           ) : (
+//             <VerticalConnector height="h-10" label="Stepped-Down Feed" />
+//           )}
+
+//           {/* 7. COMMON LT KIOSK */}
+//           {/* <div className="max-w-4xl mx-auto bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-xl">
+//             <div className="text-center">
+//               <span className="text-[10px] font-black text-blue-300 tracking-wider block uppercase">STEP-DOWN COMBINER PANEL</span>
+//               <h3 className="text-2xl font-black tracking-widest text-white mt-1"> LT KIOSK</h3>
+//               <p className="text-xs text-blue-200 mt-1 font-semibold">Collects stepped-down 433V lines from all 6 transformers</p>
+//             </div>
+
+//             <div className="mt-6 grid grid-cols-3 gap-4 border-t border-blue-900 pt-4">
+//               <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
+//                 <span className="text-[10px] text-blue-200 block font-bold">BUSBAR VOLTAGE</span>
+//                 <strong className="text-2xl font-black text-white block mt-1">433 V</strong>
+//               </div>
+//               <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
+//                 <span className="text-[10px] text-blue-200 block font-bold">TOTAL CURRENT</span>
+//                 <strong className="text-2xl font-black text-white block mt-1">2430 A</strong>
+//               </div>
+//               <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
+//                 <span className="text-[10px] text-blue-200 block font-bold">POWER FACTOR (PF)</span>
+//                 <strong className="text-2xl font-black text-white block mt-1">0.98</strong>
+//               </div>
+//             </div>
+//           </div> */}
+
+//           <div className="flex justify-center w-full my-3">
+//   <div
+//     onClick={() => setKiosksExpanded(!kiosksExpanded)}
+//     className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+//   >
+//     <div className="h-full flex flex-col items-center justify-center text-center">
+//       <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+//         STEP-DOWN COMBINER PANEL
+//       </span>
+
+//       <h3 className="text-lg font-black text-white tracking-wider mt-1">
+//         LT KIOSK
+//       </h3>
+//     </div>
+//   </div>
+// </div>
+
+// <div
+//   className={`transition-all duration-500 ease-in-out overflow-hidden ${
+//     kiosksExpanded
+//       ? "max-h-[2000px] opacity-100"
+//       : "max-h-0 opacity-0 pointer-events-none"
+//   }`}
+// >
+//   <div className="flex justify-center h-10">
+//     <div className="flow-line-vertical h-full">
+//       <div className="flow-pulse-vertical" />
+//     </div>
+//   </div>
+
+//   <div className="max-w-7xl mx-auto px-4">
+//     <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+//       <div className="flow-pulse-horizontal" />
+//     </div>
+
+//     <div className="grid grid-cols-6 gap-4">
+//       {Array.from({ length: 6 }).map((_, index) => (
+//         <div key={index} className="flex flex-col items-center">
+//           <div className="flow-line-vertical h-8">
+//             <div className="flow-pulse-vertical" />
+//           </div>
+
+//           <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center text-center">
+//             <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">
+//               LT KIOSK
+//             </span>
+
+//             <strong className="text-xl font-black tracking-widest mt-2">
+//               KIOSK-{index + 1}
+//             </strong>
+
+//             <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">
+//               433V PANEL
+//             </span>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   </div>
+// </div>
+
+//           <VerticalConnector height="h-10" />
+
+//           {/* 8. LT BUSBAR */}
+//           {/* <BusbarBlock name="COMMON LT BUSBAR (433V)" voltage="433V" />
+
+//           <VerticalConnector height="h-14" label="Building Distribution Lines" /> */}
+
+// <div className="flex justify-center w-full my-3">
+//   <div
+//     onClick={() => setBusbarsExpanded(!busbarsExpanded)}
+//     className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+//   >
+//     <div className="h-full flex flex-col items-center justify-center text-center">
+
+//       <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+//         POWER DISTRIBUTION
+//       </span>
+
+//       <h3 className="text-lg font-black text-white tracking-wider mt-1">
+//          LT BUSBAR
+//       </h3>
+
+//       <span className="text-xs text-blue-300 mt-1">
+//         433V
+//       </span>
+
+//     </div>
+//   </div>
+// </div>
+
+// <div
+//   className={`transition-all duration-500 ease-in-out overflow-hidden ${
+//     busbarsExpanded
+//       ? "max-h-[2000px] opacity-100"
+//       : "max-h-0 opacity-0 pointer-events-none"
+//   }`}
+// >
+
+//   {/* Flow */}
+//   <div className="flex justify-center h-10">
+//     <div className="flow-line-vertical h-full">
+//       <div className="flow-pulse-vertical" />
+//     </div>
+//   </div>
+
+//   <div className="max-w-7xl mx-auto px-4">
+
+//     {/* Horizontal Bus */}
+//     <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+//       <div className="flow-pulse-horizontal" />
+//     </div>
+
+//    {/* 6 LT Busbars */}
+// <div className="grid grid-cols-6 gap-4">
+//   {Array.from({ length: 6 }).map((_, index) => (
+//     <div key={index} className="flex flex-col items-center">
+
+//       <div className="flow-line-vertical h-8">
+//         <div className="flow-pulse-vertical" />
+//       </div>
+
+//       <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center">
+//         <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">
+//           LT BUSBAR
+//         </span>
+
+//         <strong className="text-xl font-black tracking-widest mt-2">
+//           BUS-{index + 1}
+//         </strong>
+
+//         <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">
+//           433V
+//         </span>
+//       </div>
+
+//     </div>
+//   ))}
+// </div>
+
+//   </div>
+
+// </div>
+
+// {/* Flow below all 6 busbars like LT Kiosk */}
+// <div className="flex justify-center h-14">
+//   <div className="flow-line-vertical h-full">
+//     <div className="flow-pulse-vertical" />
+//   </div>
+// </div>
+
+
+
+//           {/* 9. SKY-1 / SKY-2 BUILDINGS */}
+//           <div className="grid gap-6 lg:grid-cols-2 max-w-5xl mx-auto">
+//             <BuildingTower id="sky-1" name="WING-A BUILDING" floors={20} clients={40} />
+//             <BuildingTower id="sky-2" name="WING-B BUILDING" floors={20} clients={40} />
+//           </div>
+
+//         </div>
+//       </section>
+
+
+
+
+
+//       {/* Footer System Diagnostics */}
+//       <footer className="bg-slate-100 border-t border-slate-200 py-6 px-6 text-slate-500 text-xs">
+//         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-center gap-4 font-semibold">
+//           <p>© 2026 Arcot Industries. All systems operational.</p>
+//           <div className="flex items-center gap-4">
+//             <span className="flex items-center gap-1"><ShieldAlert className="w-4 h-4 text-emerald-600" /> System Integrity: 100%</span>
+//             <span>Refreshed: Live Telemetry</span>
+//           </div>
+//         </div>
+//       </footer>
+
+//     </main>
+//   );
+// }
+
+
+
+
+
+
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Zap, Gauge, Activity, Cpu, ArrowDown, ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
+import { Zap, ShieldAlert, X } from "lucide-react";
+import aiLogo from "../assets/AI LOGO.png";
 
 export default function MainOverview() {
-  const [transformersExpanded, setTransformersExpanded] = useState(false);
+  const [activePopup, setActivePopup] = useState(null);
+  const [transformersExpanded, setTransformersExpanded] = useState(true);
+  const [kiosksExpanded, setKiosksExpanded] = useState(true);
+  const [busbarsExpanded, setBusbarsExpanded] = useState(true);
 
   const outgoing = [
     { name: "OG-1", transformer: "TR-1" },
@@ -23,703 +803,668 @@ export default function MainOverview() {
     { id: "TR-6", oilTemp: "51°C", windingTemp: "57°C", buchholz: "Healthy", load: "60%" },
   ];
 
-  // Helper component for animated vertical lines
-  const VerticalConnector = ({ height = "h-12", label = "" }) => (
-    <div className="flex flex-col items-center w-full">
-      <div className={`flow-line-vertical ${height}`}>
-        <div className="flow-pulse-vertical" />
+const OverviewBox = ({ title, subtitle, onClick }) => (
+  <button
+    onClick={onClick}
+    className="h-[160px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-colors flex flex-col items-center justify-center text-center px-6"
+  >
+    <h3 className="text-2xl font-400 uppercase tracking-wide">{title}</h3>
+    <p className="text-sm text-blue-300 font-bold uppercase mt-4">{subtitle}</p>
+  </button>
+);
+
+
+const WingOverviewBox = ({ title, subtitle }) => (
+  <div className="h-[160px] w-[50%] mx-auto bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-all duration-300 flex items-center justify-center gap-4 px-4">
+
+    {/* Building Design */}
+    <div className="w-[55px] h-[100px] bg-[#05143C] border border-[#004AAD] rounded-t-sm p-1.5 flex flex-col justify-between shrink-0">
+      <div className="h-[2px] w-full bg-cyan-400 shadow-[0_0_8px_#00E5FF]" />
+
+      <div className="grid grid-cols-4 gap-1">
+        {Array.from({ length: 28 }).map((_, i) => (
+          <span
+            key={i}
+            className="h-1.5 rounded-[2px] bg-white/15"
+          />
+        ))}
       </div>
-      {label && (
-        <span className="text-[10px] font-300 tracking-widest uppercase text-[#004AAD] mt-1">
-          {label}
-        </span>
-      )}
+
+      <div className="h-1.5 w-full bg-[#004AAD]" />
+    </div>
+
+    {/* Text Section */}
+    <div className="text-center">
+      <h3 className="text-lg font-semibold uppercase tracking-wide">
+        {title}
+      </h3>
+
+      <p className="text-[11px] text-blue-300 font-semibold uppercase mt-2">
+        {subtitle}
+      </p>
+    </div>
+
+  </div>
+);
+
+
+const FlowLineH = () => (
+  <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
+    <div className="flow-pulse-horizontal" />
+  </div>
+);
+
+const FlowLineV = () => (
+  <div className="w-[4px] h-full bg-cyan-400 relative overflow-hidden">
+    <div className="flow-pulse-vertical" />
+  </div>
+);
+
+  const PopupShell = ({ title, children }) => (
+    <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5">
+      <div className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-slate-50 border-2 border-[#004AAD] rounded-xl shadow-2xl p-6 relative">
+        <div className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-black tracking-[0.25em] uppercase text-[#004AAD]">BMS Detail View</span>
+            <h2 className="text-xl font-black text-[#081F5C] uppercase mt-1">{title}</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActivePopup(null)}
+            className="h-9 w-9 rounded bg-[#081F5C] text-white flex items-center justify-center hover:bg-[#0A276E] transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        {children}
+      </div>
     </div>
   );
 
-  // Helper component for busbar equipment blocks
-  const BusbarBlock = ({ name, voltage }) => (
-    <div className="w-full max-w-4xl mx-auto my-4 busbar-glow-bg border-2 border-[#004AAD] p-4 text-center rounded shadow-lg relative">
-      <div className="busbar-glow-element" />
-      <div className="relative z-10 flex items-center justify-between px-6">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-xs font-300 text-blue-200 tracking-wider">SYSTEM BUSBAR ACTIVE</span>
-        </div>
-        <h3 className="text-xl font-300 text-white tracking-widest">{name}</h3>
-        <span className="bg-[#004AAD] border border-blue-400 text-white text-xs font-300 px-3 py-1 rounded">
-          {voltage}
-        </span>
+  // const SourcePopup = () => (
+  //   <PopupShell title="33kV Source → Incoming → Outgoing">
+  //     {/* 1. SOURCE SECTION */}
+  //     <div className="max-w-3xl mx-auto bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
+  //       <div className="absolute top-3 right-3 flex gap-2">
+  //         <span className="flex items-center gap-1 bg-[#05143C] border border-emerald-500 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded shadow-[0_0_8px_rgba(52,211,153,0.2)]">
+  //           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+  //           ONLINE
+  //         </span>
+  //       </div>
+
+  //       <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
+  //         <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">CENTRAL CONTROL PANEL</span>
+  //         <h3 className="text-2xl font-black mt-1 text-white tracking-widest">33kV SOURCE PANELS</h3>
+  //         <p className="text-xs text-blue-200 mt-1 font-semibold">Dual high-tension grid utility connection monitoring node</p>
+  //       </div>
+
+  //       <div className="grid gap-4 md:grid-cols-2">
+  //         <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative">
+  //           <div className="flex justify-between items-start">
+  //             <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 1 (MAINGRID)</span>
+  //             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
+  //           </div>
+  //           <div className="mt-2 flex items-center gap-3">
+  //             <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
+  //               <Zap className="h-5 w-5 text-emerald-400" />
+  //             </div>
+  //             <div>
+  //               <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
+  //               <span className="text-[10px] font-bold text-emerald-400">ACTIVE FEEDER</span>
+  //             </div>
+  //           </div>
+  //         </div>
+
+  //         <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative opacity-90">
+  //           <div className="flex justify-between items-start">
+  //             <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 2 (DG STANDBY)</span>
+  //             <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block shadow-[0_0_6px_#fbbf24]" />
+  //           </div>
+  //           <div className="mt-2 flex items-center gap-3">
+  //             <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
+  //               <Zap className="h-5 w-5 text-amber-400" />
+  //             </div>
+  //             <div>
+  //               <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
+  //               <span className="text-[10px] font-bold text-amber-300">STANDBY MODE</span>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+
+  //     {/* SVG Animated Split Lines (Source -> Incomings) */}
+  //     <div className="w-full max-w-4xl mx-auto h-16 relative">
+  //       <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  //         <defs>
+  //           <marker id="arrow-cyan-popup" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+  //             <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#00E5FF" />
+  //           </marker>
+  //         </defs>
+  //         <path d="M 400 0 V 32 H 200 V 64 M 400 32 H 600 V 64" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+  //         <path d="M 400 0 V 32 H 200 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan-popup)" />
+  //         <path d="M 400 0 V 32 H 600 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan-popup)" />
+  //       </svg>
+  //     </div>
+
+  //     {/* 2. INCOMING SECTION */}
+  //     <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+  //       {['Incoming 1', 'Incoming 2'].map((item, index) => (
+  //         <div key={item} className="bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md relative panel-active-glow rounded-md">
+  //           <div className="absolute top-2 right-2">
+  //             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
+  //           </div>
+  //           <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">FEEDER BREAKER {index + 1}</span>
+  //           <h4 className="text-lg font-black mt-1 text-white">{item}</h4>
+  //           <div className="mt-4 grid grid-cols-2 gap-2 bg-[#05143C] p-3 border border-blue-900">
+  //             <div>
+  //               <span className="text-[9px] text-blue-300 font-bold block">VOLTAGE</span>
+  //               <strong className="text-sm font-extrabold text-white">33.0 kV</strong>
+  //             </div>
+  //             <div>
+  //               <span className="text-[9px] text-blue-300 font-bold block">BREAKER</span>
+  //               <strong className="text-sm font-extrabold text-emerald-400">CLOSED / ON</strong>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       ))}
+  //     </div>
+
+  //     {/* SVG Animated Merge Lines (Incomings -> Outgoing) */}
+  //     <div className="w-full max-w-4xl mx-auto h-16 relative">
+  //       <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  //         <path d="M 200 0 V 32 H 400 V 64 M 600 0 V 32 H 400" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+  //         <path d="M 200 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan-popup)" />
+  //         <path d="M 600 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan-popup)" />
+  //       </svg>
+  //     </div>
+
+  //     {/* 3. 33kV OUTGOING PANEL */}
+  //     <div className="w-full max-w-4xl mx-auto my-2 busbar-glow-bg border-2 border-[#004AAD] p-5 text-center rounded shadow-lg relative panel-active-glow">
+  //       <div className="busbar-glow-element" />
+  //       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 gap-4">
+  //         <div className="flex items-center gap-2">
+  //           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+  //           <span className="text-xs font-black text-blue-200 tracking-wider">OUTGOING BUSBAR ENERGIZED</span>
+  //         </div>
+  //         <h3 className="text-xl font-black text-white tracking-widest">33kV OUTGOING</h3>
+  //         <div className="flex gap-4">
+  //           <span className="bg-[#05143C] border border-[#004AAD] text-emerald-400 text-xs font-extrabold px-3 py-1 rounded">33.0 kV</span>
+  //           <span className="bg-[#05143C] border border-[#004AAD] text-white text-xs font-extrabold px-3 py-1 rounded">50.0 Hz</span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </PopupShell>
+  // );
+const SourceBox = ({ title, subtitle, icon }) => (
+  <div className="h-[115px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-none shadow-xl panel-active-glow flex flex-col items-center justify-center text-center px-4">
+    {icon && (
+      <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
+        <Zap className="h-5 w-5 text-emerald-400" />
       </div>
-    </div>
-  );
+    )}
 
-  const [kiosksExpanded, setKiosksExpanded] = useState(false);
-  const [busbarsExpanded, setBusbarsExpanded] = useState(false);
+    <span className="text-[9px] font-black text-blue-300 tracking-[0.2em] uppercase">
+      {subtitle}
+    </span>
 
-  // Helper component for building tower UI
-  const BuildingTower = ({ id, name, floors, clients }) => (
-    <Link
-      to={`/building/${id}`}
-      className="group flex flex-col md:flex-row items-center gap-6 bg-[#081F5C] border-2 border-[#004AAD] p-6 hover-lift text-white rounded shadow-xl w-full"
-    >
-      {/* Tower Graphic */}
-      <div className="relative w-28 h-56 bg-[#05143C] border border-blue-900 rounded-t p-2 flex flex-col justify-between overflow-hidden shadow-inner shrink-0">
-        {/* Sky antenna */}
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[2px] h-6 bg-[#004AAD]">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+    <h4 className="text-lg font-semibold uppercase tracking-wide mt-1">
+      {title}
+    </h4>
+  </div>
+);
+
+const SourcePopup = () => (
+  <PopupShell title="33kV Source → Incoming / Outgoing → Meter → Feeder">
+    <div className="max-w-5xl mx-auto">
+
+      {/* SOURCE */}
+      <div className="flex justify-center">
+        <div className="w-[320px]">
+          <SourceBox
+            title="33kV SOURCE"
+            subtitle="CENTRAL CONTROL PANEL"
+            icon
+          />
+        </div>
+      </div>
+
+      {/* SOURCE DOWN TO BUS */}
+      <div className="flex justify-center h-10">
+        <div className="flow-line-vertical h-full">
+          <div className="flow-pulse-vertical" />
+        </div>
+      </div>
+
+      {/* BUS FLOW BELOW SOURCE */}
+      <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
+        <div className="flow-pulse-horizontal" />
+      </div>
+
+      {/* BUS TO INC1 / INC2 */}
+      <div className="relative h-14 w-[760px] mx-auto">
+        <div className="absolute left-0 top-0 h-full">
+          <div className="flow-line-vertical h-full">
+            <div className="flow-pulse-vertical" />
+          </div>
         </div>
 
-        {/* Helipad glow */}
-        <div className="h-[2px] w-full bg-[#004AAD] shadow-[0_0_10px_#00E5FF]" />
+        <div className="absolute right-0 top-0 h-full">
+          <div className="flow-line-vertical h-full">
+            <div className="flow-pulse-vertical" />
+          </div>
+        </div>
+      </div>
 
-        {/* Windows layout representing 20 floors */}
-        <div className="grid grid-cols-4 gap-1.5 h-44 overflow-hidden py-1">
-          {Array.from({ length: 48 }).map((_, idx) => (
-            <span
-              key={idx}
-              className="h-2 rounded-sm transition-colors duration-300 bg-white/10 group-hover:bg-[#00E5FF]/40 shadow-[0_0_2px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_4px_rgba(0,229,255,0.4)]"
-            />
+      {/* INC1 - OUT - INC2 */}
+      <div className="grid grid-cols-[320px_80px_320px_80px_320px] items-center">
+        <SourceBox title="INC1" subtitle="FEEDER BREAKER" />
+
+        <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+          <div className="flow-pulse-horizontal" />
+        </div>
+
+        <SourceBox title="OUT" subtitle="OUTGOING BUSBAR" />
+
+        <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+          <div className="flow-pulse-horizontal" />
+        </div>
+
+        <SourceBox title="INC2" subtitle="FEEDER BREAKER" />
+      </div>
+
+      {/* OUT TO METER */}
+      <div className="flex justify-center h-12">
+        <div className="flow-line-vertical h-full">
+          <div className="flow-pulse-vertical" />
+        </div>
+      </div>
+
+      {/* METER */}
+      <div className="flex justify-center">
+        <div className="w-[320px]">
+          <SourceBox title="METER" subtitle="METERING UNIT" />
+        </div>
+      </div>
+
+      {/* METER TO FEEDER */}
+      <div className="flex justify-center h-12">
+        <div className="flow-line-vertical h-full">
+          <div className="flow-pulse-vertical" />
+        </div>
+      </div>
+
+      {/* FEEDER */}
+      <div className="flex justify-center">
+        <div className="w-[320px]">
+          <SourceBox title="33kV FEEDER" subtitle="FEEDER SWITCHGEAR PANEL" />
+        </div>
+      </div>
+
+    </div>
+  </PopupShell>
+);
+
+  const FeederPopup = () => (
+    <PopupShell title="33kV Feeder Panel">
+      <div className="w-full max-w-5xl mx-auto my-4 bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
+        <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
+          <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">FEEDER SWITCHGEAR PANEL</span>
+          <h3 className="text-xl font-black text-white tracking-widest mt-1">33kV FEEDER PANEL</h3>
+        </div>
+        <div className="mb-4">
+          <div className="max-w-xs mx-auto bg-[#05143C] border border-[#004AAD] p-4 text-center rounded relative">
+            <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">INCOMING FEEDER</span>
+            <strong className="text-sm font-black text-white mt-1 block">INCOMING FEEDER 1</strong>
+            <div className="mt-2 flex items-center justify-center gap-1.5 text-emerald-400 text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              CONNECTED / ACTIVE
+            </div>
+          </div>
+        </div>
+        <div className="w-full h-12 relative my-2">
+          <svg className="w-full h-full overflow-visible" viewBox="0 0 960 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow-cyan-small-popup" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+              </marker>
+            </defs>
+            <path d="M 480 0 V 16 H 80 V 48 M 80 16 H 240 V 48 M 240 16 H 400 V 48 M 400 16 H 560 V 48 M 560 16 H 720 V 48 M 720 16 H 880 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            {[80, 240, 400, 560, 720, 880].map((x, i) => (
+              <path key={x} d={`M 480 0 V 16 H ${x} V 48`} stroke="#00E5FF" strokeWidth="2.5" className={i < 3 ? "flow-path-left" : "flow-path-right"} markerEnd="url(#arrow-cyan-small-popup)" />
+            ))}
+          </svg>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 mt-2">
+          {outgoing.map((item) => (
+            <div key={item.name} className="bg-[#05143C] border border-[#004AAD] p-4 text-center text-white shadow rounded">
+              <span className="text-[9px] font-bold text-blue-300 block">FEEDER</span>
+              <strong className="text-lg font-black block tracking-wider mt-1">{item.name}</strong>
+              <p className="text-[10px] text-blue-100 font-bold mt-1">To {item.transformer}</p>
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-emerald-400">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
+                <span className="text-xs font-black">ON</span>
+              </div>
+            </div>
           ))}
         </div>
-
-        {/* Tower Base */}
-        <div className="h-2 w-full bg-[#004AAD]" />
       </div>
+    </PopupShell>
+  );
 
-      {/* Info details */}
-      <div className="flex-1 text-center md:text-left">
-        <span className="text-[10px] font-300 tracking-widest text-blue-300 uppercase">
-          Digital Twin Node
-        </span>
-        <h3 className="text-2xl font-300 text-white tracking-wide mt-1 group-hover:text-blue-200 transition-colors">
-          {name}
-        </h3>
-        <div className="mt-3 grid grid-cols-2 gap-2 text-left">
-          <div className="bg-[#05143C] p-2 border border-blue-950">
-            <span className="text-[9px] text-blue-300 font-300 block">HEIGHT</span>
-            <strong className="text-sm font-extrabold">{floors} FLOORS</strong>
-          </div>
-          <div className="bg-[#05143C] p-2 border border-blue-950">
-            <span className="text-[9px] text-blue-300 font-300 block">TENANTS</span>
-            <strong className="text-sm font-300">{clients} ZONES</strong>
+  const TransformersPopup = () => (
+    <PopupShell title="33 / 0.433kV Transformers">
+      <div className="flex justify-center w-full my-3">
+        <div onClick={() => setTransformersExpanded(!transformersExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            {/* <svg className="w-16 h-10 text-blue-300 mb-2" viewBox="0 0 60 30" fill="none">
+              <circle cx="20" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" />
+              <circle cx="40" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" />
+            </svg> */}
+   <svg
+  className="w-16 h-10 text-blue-300"
+  viewBox="0 0 80 40"
+  fill="none"
+>
+  {/* 33kV Side */}
+  <circle
+    cx="28"
+    cy="20"
+    r="12"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  />
+
+  {/* Core */}
+  <line
+    x1="40"
+    y1="8"
+    x2="40"
+    y2="32"
+    stroke="currentColor"
+    strokeWidth="2"
+  />
+
+  {/* 433V Side */}
+  <circle
+    cx="50"
+    cy="20"
+    r="7"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  />
+</svg>
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">STEP-DOWN SUBSTATION</span>
+            <h3 className="text-lg font-black text-white tracking-wider mt-1">33 / 0.433kV TRANSFORMERS</h3>
           </div>
         </div>
-        {/* <p className="mt-3 text-xs text-blue-100 font-medium leading-relaxed">
-          Click tower console to view floor blueprints and active HVAC / EMS energy telemetry.
-        </p>
-        <span className="mt-4 inline-flex items-center gap-1 bg-[#004AAD] text-white text-xs font-black px-4 py-2 hover:bg-[#003b8a] transition-colors border border-blue-400">
-          ENTER CONSOLE
-        </span> */}
       </div>
-    </Link>
+      {transformersExpanded && (
+        <>
+          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
+            <div className="grid grid-cols-6 gap-4">
+              {transformers.map((tf) => (
+                <div key={tf.id} className="flex flex-col items-center">
+                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
+                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md flex flex-col justify-between rounded relative panel-active-glow min-h-[200px]">
+                    <div>
+                      <div className="mb-3 flex justify-center items-center">
+                        {/* <svg className="w-14 h-8 text-blue-300" viewBox="0 0 60 30" fill="none"><circle cx="20" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" /><circle cx="40" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" /></svg> */}
+   <svg
+  className="w-16 h-10 text-blue-300"
+  viewBox="0 0 80 40"
+  fill="none"
+>
+  {/* 33kV Side */}
+  <circle
+    cx="28"
+    cy="20"
+    r="12"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  />
+
+  {/* Core */}
+  <line
+    x1="40"
+    y1="8"
+    x2="40"
+    y2="32"
+    stroke="currentColor"
+    strokeWidth="2"
+  />
+
+  {/* 433V Side */}
+  <circle
+    cx="50"
+    cy="20"
+    r="7"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  />
+</svg>
+                      </div>
+                      <strong className="text-base font-black block text-center tracking-widest">{tf.id}</strong>
+                      <span className="text-[9px] font-bold text-blue-300 text-center block uppercase">33kV / 433V TX</span>
+                    </div>
+                    <div className="mt-4 space-y-2 border-t border-blue-900 pt-3">
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Oil Temp:</span><span className="font-extrabold text-white">{tf.oilTemp}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Wind Temp:</span><span className="font-extrabold text-white">{tf.windingTemp}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Relay:</span><span className="font-extrabold text-emerald-400">{tf.buchholz}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Load:</span><span className="font-extrabold text-white">{tf.load}</span></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </PopupShell>
+  );
+
+  const KioskPopup = () => (
+    <PopupShell title="LT Kiosk">
+      <div className="flex justify-center w-full my-3">
+        <div onClick={() => setKiosksExpanded(!kiosksExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">STEP-DOWN COMBINER PANEL</span>
+            <h3 className="text-lg font-black text-white tracking-wider mt-1">LT KIOSK</h3>
+          </div>
+        </div>
+      </div>
+      {kiosksExpanded && (
+        <>
+          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
+            <div className="grid grid-cols-6 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
+                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center text-center">
+                    <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT KIOSK</span>
+                    <strong className="text-xl font-black tracking-widest mt-2">KIOSK-{index + 1}</strong>
+                    <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V PANEL</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </PopupShell>
+  );
+
+  const BusbarPopup = () => (
+    <PopupShell title="LT Busduct / Busbar">
+      <div className="flex justify-center w-full my-3">
+        <div onClick={() => setBusbarsExpanded(!busbarsExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">POWER DISTRIBUTION</span>
+            <h3 className="text-lg font-black text-white tracking-wider mt-1">LT BUSDUCT / BUSBAR</h3>
+            <span className="text-xs text-blue-300 mt-1">433V</span>
+          </div>
+        </div>
+      </div>
+      {busbarsExpanded && (
+        <>
+          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
+            <div className="grid grid-cols-6 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
+                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT BUSBAR</span>
+                    <strong className="text-xl font-black tracking-widest mt-2">BUS-{index + 1}</strong>
+                    <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </PopupShell>
   );
 
   return (
     <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
-
-      {/* SCADA Top Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-[#081F5C] border-b-4 border-[#004AAD] px-6 py-4 text-white shadow-md">
-        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-center gap-4">
+      <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
+        <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-[#004AAD] p-2 rounded shadow">
-              <Cpu className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <p className="text-[9px] font-black tracking-[0.3em] text-blue-300 uppercase">
-                Enterprise Building Management System
-              </p>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                BMS Command Control Overview
-              </h1>
-            </div>
+            <img src={aiLogo} alt="AI Logo" className="h-28 w-28 object-contain -my-6" />
+            <h1 className="text-lg font-semibold tracking-tight text-white uppercase leading-none">BMS Command Control Overview</h1>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3.5 py-1.5 text-xs font-extrabold tracking-wider text-white">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
-              SCADA CONNECTED
-            </span>
-          </div>
+          <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1 text-[10px] font-bold tracking-wider text-white">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+            SCADA CONNECTED
+          </span>
         </div>
       </header>
 
-      {/* Main Single Line Diagram Console */}
-      <section className="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
-        <div className="bg-slate-50 border border-slate-200 p-6 md:p-10 shadow-inner rounded-lg">
+<section className="w-full h-[calc(100vh-72px)] bg-slate-50 px-8 py-8 overflow-hidden">
+  <div className="w-full h-full flex flex-col justify-center">
 
-          {/* Section Heading */}
-          <div className="mb-8 border-b-2 border-slate-200 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h2 className="text-xl font-black text-[#081F5C] tracking-wide uppercase">
-                Electrical Mimic Single Line Diagram (SLD)
-              </h2>
-              <p className="text-xs text-slate-500 font-semibold mt-1">
-                Visualizing physical power distribution path from incoming utility feeders to end-user tenants.
-              </p>
-            </div>
-            <strong className="text-xs bg-[#081F5C] text-white px-3 py-1 font-bold">33kV / 433V GRID</strong>
-          </div>
+    {/* ROW 1: SOURCE → FEEDERS → TRANSFORMER → LT KIOSK */}
+    <div className="grid grid-cols-[1fr_70px_1fr_70px_1fr_70px_1fr] items-center">
+      <OverviewBox
+        title="33kV Source"
+        subtitle="Source → Incoming → Outgoing"
+        onClick={() => setActivePopup("source")}
+      />
 
-          {/* 1. SOURCE SECTION */}
-          <div className="max-w-3xl mx-auto bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
-            <div className="absolute top-3 right-3 flex gap-2">
-              <span className="flex items-center gap-1 bg-[#05143C] border border-emerald-500 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded shadow-[0_0_8px_rgba(52,211,153,0.2)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                ONLINE
-              </span>
-            </div>
+      <FlowLineH />
 
-            <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
-              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">CENTRAL CONTROL PANEL</span>
-              <h3 className="text-2xl font-black mt-1 text-white tracking-widest">33kV SOURCE PANELS</h3>
-              <p className="text-xs text-blue-200 mt-1 font-semibold">Dual high-tension grid utility connection monitoring node</p>
-            </div>
+      <OverviewBox
+        title="33kv Feeder"
+        subtitle="1 Incoming / 6 Outgoing"
+        onClick={() => setActivePopup("feeders")}
+      />
 
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* Feeder 1 */}
-              <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative">
-                <div className="flex justify-between items-start">
-                  <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 1 (MAINGRID)</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
-                </div>
-                <div className="mt-2 flex items-center gap-3">
-                  <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
-                    <Zap className="h-5 w-5 text-emerald-400" />
-                  </div>
-                  <div>
-                    <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
-                    <span className="text-[10px] font-bold text-emerald-400">ACTIVE FEEDER</span>
-                  </div>
-                </div>
-              </div>
+      <FlowLineH />
 
-              {/* Feeder 2 */}
-              <div className="bg-[#05143C] border border-[#004AAD] p-4 rounded relative opacity-90">
-                <div className="flex justify-between items-start">
-                  <span className="text-[9px] font-black text-blue-300 tracking-wider uppercase">SOURCE 2 (DG STANDBY)</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block shadow-[0_0_6px_#fbbf24]" />
-                </div>
-                <div className="mt-2 flex items-center gap-3">
-                  <div className="bg-[#081F5C] p-2 border border-blue-900 rounded">
-                    <Zap className="h-5 w-5 text-amber-400" />
-                  </div>
-                  <div>
-                    <span className="text-xl font-black block tracking-wide text-white">33.0 kV</span>
-                    <span className="text-[10px] font-bold text-amber-300">STANDBY MODE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <OverviewBox
+        title="Transformer"
+        subtitle="33kV / 433V"
+        onClick={() => setActivePopup("transformers")}
+      />
 
-          {/* SVG Animated Split Lines (Source -> Incomings) */}
-          <div className="w-full max-w-4xl mx-auto h-16 relative">
-            <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#00E5FF" />
-                </marker>
-              </defs>
-              {/* Static Background Path */}
-              <path d="M 400 0 V 32 H 200 V 64 M 400 32 H 600 V 64" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              {/* Animated Flow Path Left */}
-              <path d="M 400 0 V 32 H 200 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan)" />
-              {/* Animated Flow Path Right */}
-              <path d="M 400 0 V 32 H 600 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan)" />
-            </svg>
-          </div>
+      <FlowLineH />
 
-          {/* 2. INCOMING SECTION (Side-by-Side) */}
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-            {/* Incoming 1 */}
-            <div className="bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md relative panel-active-glow rounded-md">
-              <div className="absolute top-2 right-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
-              </div>
-              <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">FEEDER BREAKER 1</span>
-              <h4 className="text-lg font-black mt-1 text-white">Incoming 1</h4>
-
-              <div className="mt-4 grid grid-cols-2 gap-2 bg-[#05143C] p-3 border border-blue-900">
-                <div>
-                  <span className="text-[9px] text-blue-300 font-bold block">VOLTAGE</span>
-                  <strong className="text-sm font-extrabold text-white">33.0 kV</strong>
-                </div>
-                <div>
-                  <span className="text-[9px] text-blue-300 font-bold block">BREAKER</span>
-                  <strong className="text-sm font-extrabold text-emerald-400">CLOSED / ON</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Incoming 2 */}
-            <div className="bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md relative panel-active-glow rounded-md">
-              <div className="absolute top-2 right-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" />
-              </div>
-              <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">FEEDER BREAKER 2</span>
-              <h4 className="text-lg font-black mt-1 text-white">Incoming 2</h4>
-
-              <div className="mt-4 grid grid-cols-2 gap-2 bg-[#05143C] p-3 border border-blue-900">
-                <div>
-                  <span className="text-[9px] text-blue-300 font-bold block">VOLTAGE</span>
-                  <strong className="text-sm font-extrabold text-white">33.0 kV</strong>
-                </div>
-                <div>
-                  <span className="text-[9px] text-blue-300 font-bold block">BREAKER</span>
-                  <strong className="text-sm font-extrabold text-emerald-400">CLOSED / ON</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* SVG Animated Merge Lines (Incomings -> Outgoing) */}
-          <div className="w-full max-w-4xl mx-auto h-16 relative">
-            <svg className="w-full h-full overflow-visible" viewBox="0 0 800 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Static Background Path */}
-              <path d="M 200 0 V 32 H 400 V 64 M 600 0 V 32 H 400" stroke="#cbd5e1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              {/* Animated Flow Path Left */}
-              <path d="M 200 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-left" markerEnd="url(#arrow-cyan)" />
-              {/* Animated Flow Path Right */}
-              <path d="M 600 0 V 32 H 400 V 64" stroke="#00E5FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="flow-path-right" markerEnd="url(#arrow-cyan)" />
-            </svg>
-          </div>
-
-          {/* 3. 33kV OUTGOING PANEL */}
-          <div className="w-full max-w-4xl mx-auto my-2 busbar-glow-bg border-2 border-[#004AAD] p-5 text-center rounded shadow-lg relative panel-active-glow">
-            <div className="busbar-glow-element" />
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 gap-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span className="text-xs font-black text-blue-200 tracking-wider">OUTGOING BUSBAR ENERGIZED</span>
-              </div>
-              <h3 className="text-xl font-black text-white tracking-widest">33kV OUTGOING</h3>
-              <div className="flex gap-4">
-                <span className="bg-[#05143C] border border-[#004AAD] text-emerald-400 text-xs font-extrabold px-3 py-1 rounded">
-                  33.0 kV
-                </span>
-                <span className="bg-[#05143C] border border-[#004AAD] text-white text-xs font-extrabold px-3 py-1 rounded">
-                  50.0 Hz
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <VerticalConnector height="h-10" label="Feeder Bus Connection" />
-
-          {/* 4. 33kV FEEDER PANEL */}
-          <div className="w-full max-w-5xl mx-auto my-4 bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
-            <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
-              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">FEEDER SWITCHGEAR PANEL</span>
-              <h3 className="text-xl font-black text-white tracking-widest mt-1">33kV FEEDER PANEL</h3>
-            </div>
-
-            {/* 1. INCOMING FEEDER Section */}
-            <div className="mb-4">
-              <div className="max-w-xs mx-auto bg-[#05143C] border border-[#004AAD] p-4 text-center rounded relative">
-                <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">INCOMING FEEDER</span>
-                <strong className="text-sm font-black text-white mt-1 block">INCOMING FEEDER 1</strong>
-                <div className="mt-2 flex items-center justify-center gap-1.5 text-emerald-400 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  CONNECTED / ACTIVE
-                </div>
-              </div>
-            </div>
-
-            {/* Animated Split SVG Flow Lines inside the panel */}
-            <div className="w-full h-12 relative my-2">
-              <svg className="w-full h-full overflow-visible" viewBox="0 0 960 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <marker id="arrow-cyan-small" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                    <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
-                  </marker>
-                </defs>
-                {/* Background line bus split */}
-                <path d="M 480 0 V 16 H 80 V 48 M 80 16 H 240 V 48 M 240 16 H 400 V 48 M 400 16 H 560 V 48 M 560 16 H 720 V 48 M 720 16 H 880 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                
-                {/* Animated Flow Lines */}
-                <path d="M 480 0 V 16 H 80 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
-                <path d="M 480 0 V 16 H 240 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
-                <path d="M 480 0 V 16 H 400 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-left" markerEnd="url(#arrow-cyan-small)" />
-                <path d="M 480 0 V 16 H 560 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
-                <path d="M 480 0 V 16 H 720 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
-                <path d="M 480 0 V 16 H 880 V 48" stroke="#00E5FF" strokeWidth="2.5" className="flow-path-right" markerEnd="url(#arrow-cyan-small)" />
-              </svg>
-            </div>
-
-            {/* 2. OUTGOING FEEDERS Section (Grid of 6) */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 mt-2">
-              {outgoing.map((item) => (
-                <div
-                  key={item.name}
-                  className="bg-[#05143C] border border-[#004AAD] p-4 text-center text-white shadow rounded"
-                >
-                  <span className="text-[9px] font-bold text-blue-300 block">FEEDER</span>
-                  <strong className="text-lg font-black block tracking-wider mt-1">{item.name}</strong>
-                  <p className="text-[10px] text-blue-100 font-bold mt-1">To {item.transformer}</p>
-                  <div className="mt-3 flex items-center justify-center gap-1.5 text-emerald-400">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
-                    <span className="text-xs font-black">ON</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Connectors to Transformers (Collapsed/Header Feed) */}
-          {!transformersExpanded && (
-            <VerticalConnector height="h-10" label="Transformer Feed" />
-          )}
-
-          {/* 6. 33/0.433kV TRANSFORMERS CENTRAL CARD */}
- <div className="flex justify-center w-full my-3">
-  <div
-    onClick={() => setTransformersExpanded(!transformersExpanded)}
-    className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-  >
-    <div className="h-full flex flex-col items-center justify-center text-center">
-
-      {/* Transformer Icon */}
-      <svg
-        className="w-16 h-10 text-blue-300 mb-2"
-        viewBox="0 0 60 30"
-        fill="none"
-      >
-        <circle
-          cx="20"
-          cy="15"
-          r="12"
-          stroke="currentColor"
-          strokeWidth="2.5"
-        />
-        <circle
-          cx="40"
-          cy="15"
-          r="12"
-          stroke="currentColor"
-          strokeWidth="2.5"
-        />
-      </svg>
-
-      {/* Text */}
-      <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-        STEP-DOWN SUBSTATION
-      </span>
-
-      <h3 className="text-lg font-black text-white tracking-wider mt-1">
-        33 / 0.433kV TRANSFORMERS
-      </h3>
-
-    </div>
-  </div>
-</div>
-
-          {/* Expanded details container */}
-        <div
-  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-    transformersExpanded
-      ? "max-h-[2000px] opacity-100"
-      : "max-h-0 opacity-0 pointer-events-none"
-  }`}
->
-  {/* Flow from top transformer box */}
-  <div className="flex justify-center h-10">
-    <div className="flow-line-vertical h-full">
-      <div className="flow-pulse-vertical" />
-    </div>
-  </div>
-
-  {/* Transformer row */}
-  <div className="max-w-7xl mx-auto px-4">
-
-    {/* Horizontal bus without extra left/right line */}
-    <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-      <div className="flow-pulse-horizontal" />
+      <OverviewBox
+        title="LT Kiosk"
+        subtitle="433V Panel"
+        onClick={() => setActivePopup("kiosks")}
+      />
     </div>
 
-    {/* 6 Transformers in same line */}
-    <div className="grid grid-cols-6 gap-4">
-      {transformers.map((tf) => (
-        <div key={tf.id} className="flex flex-col items-center">
-
-          {/* Vertical drop line */}
-          <div className="flow-line-vertical h-8">
-            <div className="flow-pulse-vertical" />
-          </div>
-
-          {/* Transformer Card */}
-          <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md flex flex-col justify-between rounded relative panel-active-glow min-h-[200px]">
-            <div>
-              <div className="mb-3 flex justify-center items-center">
-                <svg
-                  className="w-14 h-8 text-blue-300"
-                  viewBox="0 0 60 30"
-                  fill="none"
-                >
-                  <circle
-                    cx="20"
-                    cy="15"
-                    r="12"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  />
-                  <circle
-                    cx="40"
-                    cy="15"
-                    r="12"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  />
-                </svg>
-              </div>
-
-              <strong className="text-base font-black block text-center tracking-widest">
-                {tf.id}
-              </strong>
-
-              <span className="text-[9px] font-bold text-blue-300 text-center block uppercase">
-                33kV / 433V TX
-              </span>
-            </div>
-
-            <div className="mt-4 space-y-2 border-t border-blue-900 pt-3">
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-blue-200">Oil Temp:</span>
-                <span className="font-extrabold text-white">
-                  {tf.oilTemp}
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-blue-200">Wind Temp:</span>
-                <span className="font-extrabold text-white">
-                  {tf.windingTemp}
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-blue-200">Relay:</span>
-                <span className="font-extrabold text-emerald-400">
-                  {tf.buchholz}
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-blue-200">Load:</span>
-                <span className="font-extrabold text-white">
-                  {tf.load}
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-
-          {/* Stepped-Down Feed to LT Kiosk */}
-          {transformersExpanded ? (
-            <div className="w-full max-w-4xl mx-auto grid grid-cols-6 h-12 px-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex justify-center h-full">
-                  <div className="flow-line-vertical h-full">
-                    <div className="flow-pulse-vertical" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <VerticalConnector height="h-10" label="Stepped-Down Feed" />
-          )}
-
-          {/* 7. COMMON LT KIOSK */}
-          {/* <div className="max-w-4xl mx-auto bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-xl">
-            <div className="text-center">
-              <span className="text-[10px] font-black text-blue-300 tracking-wider block uppercase">STEP-DOWN COMBINER PANEL</span>
-              <h3 className="text-2xl font-black tracking-widest text-white mt-1"> LT KIOSK</h3>
-              <p className="text-xs text-blue-200 mt-1 font-semibold">Collects stepped-down 433V lines from all 6 transformers</p>
-            </div>
-
-            <div className="mt-6 grid grid-cols-3 gap-4 border-t border-blue-900 pt-4">
-              <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
-                <span className="text-[10px] text-blue-200 block font-bold">BUSBAR VOLTAGE</span>
-                <strong className="text-2xl font-black text-white block mt-1">433 V</strong>
-              </div>
-              <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
-                <span className="text-[10px] text-blue-200 block font-bold">TOTAL CURRENT</span>
-                <strong className="text-2xl font-black text-white block mt-1">2430 A</strong>
-              </div>
-              <div className="bg-[#05143C] border border-blue-900 p-4 text-center">
-                <span className="text-[10px] text-blue-200 block font-bold">POWER FACTOR (PF)</span>
-                <strong className="text-2xl font-black text-white block mt-1">0.98</strong>
-              </div>
-            </div>
-          </div> */}
-
-          <div className="flex justify-center w-full my-3">
-  <div
-    onClick={() => setKiosksExpanded(!kiosksExpanded)}
-    className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-  >
-    <div className="h-full flex flex-col items-center justify-center text-center">
-      <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-        STEP-DOWN COMBINER PANEL
-      </span>
-
-      <h3 className="text-lg font-black text-white tracking-wider mt-1">
-        LT KIOSK
-      </h3>
-    </div>
-  </div>
-</div>
-
-<div
-  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-    kiosksExpanded
-      ? "max-h-[2000px] opacity-100"
-      : "max-h-0 opacity-0 pointer-events-none"
-  }`}
->
-  <div className="flex justify-center h-10">
-    <div className="flow-line-vertical h-full">
-      <div className="flow-pulse-vertical" />
-    </div>
-  </div>
-
-  <div className="max-w-7xl mx-auto px-4">
-    <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-      <div className="flow-pulse-horizontal" />
-    </div>
-
-    <div className="grid grid-cols-6 gap-4">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div key={index} className="flex flex-col items-center">
-          <div className="flow-line-vertical h-8">
-            <div className="flow-pulse-vertical" />
-          </div>
-
-          <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">
-              LT KIOSK
-            </span>
-
-            <strong className="text-xl font-black tracking-widest mt-2">
-              KIOSK-{index + 1}
-            </strong>
-
-            <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">
-              433V PANEL
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-
-          <VerticalConnector height="h-10" />
-
-          {/* 8. LT BUSBAR */}
-          {/* <BusbarBlock name="COMMON LT BUSBAR (433V)" voltage="433V" />
-
-          <VerticalConnector height="h-14" label="Building Distribution Lines" /> */}
-
-<div className="flex justify-center w-full my-3">
-  <div
-    onClick={() => setBusbarsExpanded(!busbarsExpanded)}
-    className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-  >
-    <div className="h-full flex flex-col items-center justify-center text-center">
-
-      <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-        POWER DISTRIBUTION
-      </span>
-
-      <h3 className="text-lg font-black text-white tracking-wider mt-1">
-         LT BUSBAR
-      </h3>
-
-      <span className="text-xs text-blue-300 mt-1">
-        433V
-      </span>
-
-    </div>
-  </div>
-</div>
-
-<div
-  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-    busbarsExpanded
-      ? "max-h-[2000px] opacity-100"
-      : "max-h-0 opacity-0 pointer-events-none"
-  }`}
->
-
-  {/* Flow */}
-  <div className="flex justify-center h-10">
-    <div className="flow-line-vertical h-full">
-      <div className="flow-pulse-vertical" />
-    </div>
-  </div>
-
-  <div className="max-w-7xl mx-auto px-4">
-
-    {/* Horizontal Bus */}
-    <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-      <div className="flow-pulse-horizontal" />
-    </div>
-
-   {/* 6 LT Busbars */}
-<div className="grid grid-cols-6 gap-4">
-  {Array.from({ length: 6 }).map((_, index) => (
-    <div key={index} className="flex flex-col items-center">
-
-      <div className="flow-line-vertical h-8">
-        <div className="flow-pulse-vertical" />
+    {/* LT KIOSK → LEFT FLOW → BUSDUCT */}
+    <div className="relative h-[70px] w-full">
+      {/* Down from LT Kiosk bottom */}
+      <div className="absolute right-[12.5%] top-0 h-[35px] -translate-x-1/2">
+        <FlowLineV />
       </div>
 
-      <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center">
-        <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">
-          LT BUSBAR
-        </span>
-
-        <strong className="text-xl font-black tracking-widest mt-2">
-          BUS-{index + 1}
-        </strong>
-
-        <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">
-          433V
-        </span>
+      {/* Left horizontal flow */}
+      <div className="absolute left-1/2 right-[12.5%] top-[35px]">
+        <FlowLineH />
       </div>
 
+      {/* Down to Busduct top */}
+      <div className="absolute left-1/2 top-[35px] h-[25px] -translate-x-1/2">
+        <FlowLineV />
+      </div>
     </div>
-  ))}
+
+    {/* ROW 2: BUSDUCT CENTER */}
+    <div className="grid grid-cols-[1fr_42%_1fr]">
+  <div />
+
+  <div className="w-[75%] mx-auto">
+    <OverviewBox
+      title="Busduct"
+      subtitle="LT Busduct Distribution"
+      onClick={() => setActivePopup("busbars")}
+    />
+  </div>
+
+  <div />
+</div>
+
+    {/* BUSDUCT → WING 1 / WING 2 */}
+    <div className="relative h-[85px] w-full">
+      {/* Down from Busduct bottom */}
+      <div className="absolute left-1/2 top-0 h-[38px] -translate-x-1/2">
+        <FlowLineV />
+      </div>
+
+      {/* Horizontal split */}
+      <div className="absolute left-[25%] right-[25%] top-[38px]">
+        <FlowLineH />
+      </div>
+
+      {/* Down to Wing 1 top */}
+      <div className="absolute left-[25%] top-[38px] h-[35px] -translate-x-1/2">
+        <FlowLineV />
+      </div>
+
+      {/* Down to Wing 2 top */}
+      <div className="absolute right-[25%] top-[38px] h-[35px] translate-x-1/2">
+        <FlowLineV />
+      </div>
+    </div>
+
+    {/* ROW 3: WINGS */}
+  <div className="grid grid-cols-2 gap-16">
+  <Link to="/building/sky-1" className="w-full">
+    <WingOverviewBox
+      title="Wing 1"
+      subtitle="20 Floors / 40 Zones"
+    />
+  </Link>
+
+  <Link to="/building/sky-2" className="w-full">
+    <WingOverviewBox
+      title="Wing 2"
+      subtitle="20 Floors / 40 Zones"
+    />
+  </Link>
 </div>
 
   </div>
+</section>
 
-</div>
+      {activePopup === "source" && <SourcePopup />}
+      {activePopup === "feeders" && <FeederPopup />}
+      {activePopup === "transformers" && <TransformersPopup />}
+      {activePopup === "kiosks" && <KioskPopup />}
+      {activePopup === "busbars" && <BusbarPopup />}
 
-{/* Flow below all 6 busbars like LT Kiosk */}
-<div className="flex justify-center h-14">
-  <div className="flow-line-vertical h-full">
-    <div className="flow-pulse-vertical" />
-  </div>
-</div>
-
-
-
-          {/* 9. SKY-1 / SKY-2 BUILDINGS */}
-          <div className="grid gap-6 lg:grid-cols-2 max-w-5xl mx-auto">
-            <BuildingTower id="sky-1" name="WING-A BUILDING" floors={20} clients={40} />
-            <BuildingTower id="sky-2" name="WING-B BUILDING" floors={20} clients={40} />
-          </div>
-
-        </div>
-      </section>
-
-      {/* Footer System Diagnostics */}
       <footer className="bg-slate-100 border-t border-slate-200 py-6 px-6 text-slate-500 text-xs">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-center gap-4 font-semibold">
           <p>© 2026 Arcot Industries. All systems operational.</p>
@@ -729,7 +1474,6 @@ export default function MainOverview() {
           </div>
         </div>
       </footer>
-
     </main>
   );
 }
