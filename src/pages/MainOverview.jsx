@@ -946,32 +946,8 @@ const OverviewBox = ({
 //   </div>
 // );
 
-const WingOverviewBox = ({ title, subtitle, onClick }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className="h-[160px] w-[50%] mx-auto bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-all duration-300 flex items-center justify-center gap-4 px-4"
-  >
-    <div className="w-[55px] h-[100px] bg-[#05143C] border border-[#004AAD] rounded-t-sm p-1.5 flex flex-col justify-between shrink-0">
-      <div className="h-[2px] w-full bg-cyan-400 shadow-[0_0_8px_#00E5FF]" />
+// 
 
-      <div className="grid grid-cols-4 gap-1">
-        {Array.from({ length: 28 }).map((_, i) => (
-          <span key={i} className="h-1.5 rounded-[2px] bg-white/15" />
-        ))}
-      </div>
-
-      <div className="h-1.5 w-full bg-[#004AAD]" />
-    </div>
-
-    <div className="text-center">
-      <h3 className="text-lg font-semibold uppercase tracking-wide">{title}</h3>
-      <p className="text-[11px] text-blue-300 font-semibold uppercase mt-2">
-        {subtitle}
-      </p>
-    </div>
-  </button>
-);
 const FlowLineH = () => (
   <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
     <div className="flow-pulse-horizontal" />
@@ -984,14 +960,30 @@ const FlowLineV = () => (
   </div>
 );
 
-  const PopupShell = ({ title, children }) => (
-    <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5">
-      <div className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-slate-50 border-2 border-[#004AAD] rounded-xl shadow-2xl p-6 relative">
-        <div className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-black tracking-[0.25em] uppercase text-[#004AAD]">BMS Detail View</span>
-            <h2 className="text-xl font-black text-[#081F5C] uppercase mt-1">{title}</h2>
-          </div>
+ const PopupShell = ({ title, children, onBack }) => (
+  <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5">
+    <div className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-slate-50 border-2 border-[#004AAD] rounded-xl shadow-2xl p-6 relative">
+      <div className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
+        <div>
+          <span className="text-[10px] font-black tracking-[0.25em] uppercase text-[#004AAD]">
+            BMS Detail View
+          </span>
+          <h2 className="text-xl font-black text-[#081F5C] uppercase mt-1">
+            {title}
+          </h2>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="h-9 w-9 rounded bg-[#004AAD] text-white flex items-center justify-center hover:bg-[#003A86] transition-colors"
+            >
+              ←
+            </button>
+          )}
+
           <button
             type="button"
             onClick={() => setActivePopup(null)}
@@ -1000,10 +992,12 @@ const FlowLineV = () => (
             <X className="h-5 w-5" />
           </button>
         </div>
-        {children}
       </div>
+
+      {children}
     </div>
-  );
+  </div>
+);
 
   // const SourcePopup = () => (
   //   <PopupShell title="33kV Source → Incoming → Outgoing">
@@ -1371,7 +1365,7 @@ const SourcePopup = () => (
       {/* METER */}
       <div className="flex justify-center">
         <div className="w-[340px]">
-          <SourceBox title="METER" subtitle="METERING UNIT" />
+          <SourceBox title="METER" subtitle="METERING UNIT" hoverMonitor/>
         </div>
       </div>
 
@@ -1847,7 +1841,7 @@ const BusbarPopup = () => (
 );
 
 
-// const Wing1Popup = () => (
+// const Pcc1Popup = () => (
 //   <PopupShell title="Wing 1 LT Distribution Flow">
 //     <div className="relative w-full max-w-7xl mx-auto px-4 py-6 bg-white border border-slate-200 overflow-hidden">
 //       <div className="relative w-full h-[560px]">
@@ -2015,264 +2009,777 @@ const BusbarPopup = () => (
 // );
 
 
-const Wing1Popup = () => (
-  <PopupShell title="Wing 1 LT Distribution Flow">
-    <div className="relative w-full max-w-7xl mx-auto px-4 py-6 overflow-hidden">
-      <div className="relative w-full h-[560px]">
+const Pcc1Popup = () => {
+  const [hoveredPanel, setHoveredPanel] = React.useState(null);
 
-        {/* PCC1 */}
-        <div className="absolute left-[3%] top-[20px] w-[30%] h-[235px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            PCC1
-          </div>
+  const pcc1Panels = [
+    { name: "LT6\nIN", arrow: "down" },
+    { name: "DG1234\nIN", arrow: "down" },
+    { name: "OG 1", arrow: "up" },
+    { name: "RM1", arrow: "up" },
+    { name: "RM2", arrow: "up" },
+    { name: "Utility 1", arrow: "up" },
+    { name: "Spare 1", arrow: "up" },
+    { name: "Bus\nCoupler\nB/C", arrow: "both" },
+    { name: "LT5", arrow: "down" },
+    { name: "DG 1234", arrow: "down" },
+    { name: "RM1", arrow: "up" },
+    { name: "RM2", arrow: "up" },
+    { name: "Utility 2", arrow: "up" },
+    { name: "Spare 2", arrow: "up" },
+  ];
 
-          <div className="grid grid-cols-2 gap-6 h-[150px]">
-            {[
-              { title: "LT IN", value: "06" },
-              { title: "LT IN", value: "05" },
-            ].map((item) => (
-              <div
-                key={item.value}
-                className="bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]"
-              >
-                <span className="text-[10px] font-black text-blue-300 uppercase">
-                  {item.title}
-                </span>
-                <strong className="text-3xl font-black mt-2">
-                  {item.value}
-                </strong>
-              </div>
-            ))}
-          </div>
-        </div>
+  const pcc2Panels = [
+    { name: "LT1\nIN", arrow: "down" },
+    { name: "DG1234\nIN", arrow: "down" },
+    { name: "OG 1", arrow: "up" },
+    { name: "RM1", arrow: "up" },
+    { name: "RM2", arrow: "up" },
+    { name: "Utility 1", arrow: "up" },
+    { name: "Spare 1", arrow: "up" },
+    { name: "Bus\nCoupler\nB/C", arrow: "both" },
+    { name: "LT2", arrow: "down" },
+    { name: "DG 1234", arrow: "down" },
+    { name: "RM1", arrow: "up" },
+    { name: "RM2", arrow: "up" },
+    { name: "Utility 2", arrow: "up" },
+    { name: "Spare 2", arrow: "up" },
+  ];
 
-        {/* PCC2 */}
-        <div className="absolute left-[3%] top-[320px] w-[30%] h-[210px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            PCC2
-          </div>
-
-          <div className="grid grid-cols-2 gap-6 h-[125px]">
-            {[
-              { title: "LT IN", value: "01" },
-              { title: "LT IN", value: "02" },
-            ].map((item) => (
-              <div
-                key={item.value}
-                className="bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]"
-              >
-                <span className="text-[10px] font-black text-blue-300 uppercase">
-                  {item.title}
-                </span>
-                <strong className="text-3xl font-black mt-2">
-                  {item.value}
-                </strong>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* DG INC */}
-        <div className="absolute right-[3%] top-[130px] w-[39%] h-[265px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            DG INC
-          </div>
-
-          <div className="grid grid-cols-2 gap-7">
-            {[
-              { title: "DG 1 & 2", values: ["1", "2"] },
-              { title: "DG 3 & 4", values: ["3", "4"] },
-            ].map((group) => (
-              <div
-                key={group.title}
-                className="bg-[#05143C] border-2 border-[#004AAD] p-4 rounded-xl shadow-[0_0_16px_rgba(0,74,173,0.35)]"
-              >
-                <div className="text-center text-[11px] font-black text-blue-300 uppercase mb-4">
-                  {group.title}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {group.values.map((value) => (
-                    <div
-                      key={value}
-                      className="h-[90px] bg-[#081F5C] border-2 border-[#004AAD] rounded-xl flex items-center justify-center text-2xl font-black shadow-[0_0_14px_rgba(0,74,173,0.35)]"
-                    >
-                      {value}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* FLOWS */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-10"
-          viewBox="0 0 1200 560"
-          fill="none"
+  const FlowArrow = ({ type, id }) => (
+    <svg
+      className="absolute left-0 -top-[48px] w-full h-12 overflow-visible pointer-events-none"
+      viewBox="0 0 100 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <marker
+          id={`arrow-wing-${id}`}
+          viewBox="0 0 10 10"
+          refX="4"
+          refY="5"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
         >
-          <defs>
-            <marker
-              id="wing-arrow"
-              viewBox="0 0 10 10"
-              refX="6"
-              refY="5"
-              markerWidth="5"
-              markerHeight="5"
-              orient="auto"
-            >
-              <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
-            </marker>
-          </defs>
+          <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+        </marker>
+      </defs>
 
-          <path d="M 360 105 H 820 V 250" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path d="M 360 105 H 820 V 250" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-right" markerEnd="url(#wing-arrow)" />
+      {type === "down" && (
+        <>
+          <path
+            d="M 50 0 V 48"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 0 V 48"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
+        </>
+      )}
 
-          <path d="M 820 245 V 455 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path d="M 820 245 V 455 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
+      {type === "up" && (
+        <>
+          <path
+            d="M 50 48 V 0"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 48 V 0"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
+        </>
+      )}
 
-          <path d="M 1020 205 V 70 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path d="M 1020 205 V 70 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
+      {type === "both" && (
+        <>
+          <path
+            d="M 18 24 H 82"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 18 24 H 82"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
+          <path
+            d="M 82 24 H 18"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
+        </>
+      )}
+    </svg>
+  );
 
-          <path d="M 1020 380 V 485 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path d="M 1020 380 V 485 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
-        </svg>
-
+  const PanelFeatures = () => (
+    <div className="absolute inset-0 z-30 flex flex-col justify-center bg-[#081F5C] px-2">
+      <div className="flex justify-between text-[11px] leading-[15px]">
+        <span className="text-blue-200">kWh</span>
+        <span className="text-white">1245</span>
+      </div>
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">kVh</span>
+        <span className="text-white">1180</span>
+      </div>
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">V</span>
+        <span className="text-white">433V</span>
+      </div>
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">PF</span>
+        <span className="text-white">0.98</span>
+      </div>
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">Amps</span>
+        <span className="text-white">210A</span>
       </div>
     </div>
-  </PopupShell>
+  );
+
+  const PCCRow = ({ title, top, rowPanels }) => (
+    <div className={`absolute left-0 ${top} w-full h-[210px]`}>
+      <div className="absolute left-[10px] top-[-34px] text-[#081F5C] text-base font-semibold">
+        {title}
+      </div>
+
+      <div className="absolute left-0 top-[45px] w-full h-[150px] flex items-stretch z-20">
+        {rowPanels.map((panel, index) => {
+          const panelId = `${title}-${index}`;
+          const isHovered = hoveredPanel === panelId;
+
+          return (
+            <div
+              key={`${title}-${panel.name}-${index}`}
+              onMouseEnter={() => setHoveredPanel(panelId)}
+              onMouseLeave={() => setHoveredPanel(null)}
+              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
+            >
+              <FlowArrow
+                type={panel.arrow}
+                id={`${title.replace(/\s/g, "")}-${index}`}
+              />
+
+              {isHovered ? (
+                <PanelFeatures />
+              ) : (
+                <div className="absolute inset-0 z-20 flex items-center justify-center px-1">
+                  <span className="text-[14px] md:text-[12px] font-semibold leading-tight text-center whitespace-pre-line">
+                    {panel.name}
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+   <PopupShell
+  title="Wing 1 LT Distribution Flow"
+  onBack={() => setActivePopup("pccMain")}
+>
+  <div className="w-full max-w-[1600px] mx-auto px-4 py-6 overflow-visible">
+    <div className="relative w-full h-[520px] overflow-visible">
+      <PCCRow title="PCC 1" top="top-[25px]" rowPanels={pcc1Panels} />
+      <PCCRow title="PCC 2" top="top-[285px]" rowPanels={pcc2Panels} />
+    </div>
+  </div>
+</PopupShell>
+  );
+};
+
+
+const Pcc2Popup = () => {
+  const [hoveredPanel, setHoveredPanel] = React.useState(null);
+
+  const pcc3Panels = [
+    { name: "LT4\nIN", arrow: "down" },
+    { name: "DG567\nIN", arrow: "down" },
+    { name: "OG 1", arrow: "up" },
+    { name: "OG 2", arrow: "up" },
+    { name: "OG 3", arrow: "up" },
+    { name: "OG 4", arrow: "up" },
+    { name: "OG 5", arrow: "up" },
+    { name: "OG 6", arrow: "up" },
+    { name: "OG 7", arrow: "up" },
+    { name: "OG 8", arrow: "up" },
+    { name: "OG 9", arrow: "up" },
+    { name: "OG 10", arrow: "up" },
+  ];
+
+  const pcc4Panels = [
+    { name: "LT3\nIN", arrow: "down" },
+    { name: "DG567\nIN", arrow: "down" },
+    { name: "OG 1", arrow: "up" },
+    { name: "OG 2", arrow: "up" },
+    { name: "OG 3", arrow: "up" },
+    { name: "OG 4", arrow: "up" },
+    { name: "OG 5", arrow: "up" },
+    { name: "OG 6", arrow: "up" },
+    { name: "OG 7", arrow: "up" },
+    { name: "OG 8", arrow: "up" },
+    { name: "OG 9", arrow: "up" },
+    { name: "OG 10", arrow: "up" },
+  ];
+
+  const FlowArrow = ({ type, id }) => (
+    <svg
+      className="absolute left-0 -top-[48px] w-full h-12 overflow-visible pointer-events-none"
+      viewBox="0 0 100 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <marker
+          id={`arrow-wing2-${id}`}
+          viewBox="0 0 10 10"
+          refX="4"
+          refY="5"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+        </marker>
+      </defs>
+
+      {type === "down" && (
+        <>
+          <path
+            d="M 50 0 V 48"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 0 V 48"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
+        </>
+      )}
+
+      {type === "up" && (
+        <>
+          <path
+            d="M 50 48 V 0"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 48 V 0"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
+        </>
+      )}
+
+      {type === "both" && (
+        <>
+          <path
+            d="M 18 24 H 82"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 18 24 H 82"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
+          <path
+            d="M 82 24 H 18"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
+        </>
+      )}
+    </svg>
+  );
+
+  const PanelFeatures = () => (
+    <div className="absolute inset-0 z-30 flex flex-col justify-center bg-[#081F5C] px-2">
+      <div className="flex justify-between text-[12px] leading-[15px]">
+        <span className="text-blue-200">kWh</span>
+        <span className="text-white">1245</span>
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">kVh</span>
+        <span className="text-white">1180</span>
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">V</span>
+        <span className="text-white">433V</span>
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">PF</span>
+        <span className="text-white">0.98</span>
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
+        <span className="text-blue-200">Amps</span>
+        <span className="text-white">210A</span>
+      </div>
+    </div>
+  );
+
+  const PCCRow = ({ title, top, rowPanels }) => (
+    <div className={`absolute left-0 ${top} w-full h-[210px]`}>
+      <div className="absolute left-[10px] top-[-34px] text-[#081F5C] text-base font-semibold">
+        {title}
+      </div>
+
+      <div className="absolute left-0 top-[45px] w-full h-[150px] flex items-stretch z-20">
+        {rowPanels.map((panel, index) => {
+          const panelId = `${title}-${index}`;
+          const isHovered = hoveredPanel === panelId;
+
+          return (
+            <div
+              key={`${title}-${panel.name}-${index}`}
+              onMouseEnter={() => setHoveredPanel(panelId)}
+              onMouseLeave={() => setHoveredPanel(null)}
+              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
+            >
+              <FlowArrow
+                type={panel.arrow}
+                id={`${title.replace(/\s/g, "")}-${index}`}
+              />
+
+              {isHovered ? (
+                <PanelFeatures />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center px-1">
+                  <span className="text-[14px] md:text-[12px] font-semibold leading-tight text-center whitespace-pre-line">
+                    {panel.name}
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <PopupShell
+  title="Wing 2 LT Distribution Flow"
+  onBack={() => setActivePopup("pccMain")}
+>
+      <div className="w-full max-w-7xl mx-auto px-4 py-6 overflow-visible">
+        <div className="relative w-full h-[520px] overflow-visible">
+          <PCCRow title="PCC 3" top="top-[25px]" rowPanels={pcc3Panels} />
+          <PCCRow title="PCC 4" top="top-[285px]" rowPanels={pcc4Panels} />
+        </div>
+      </div>
+    </PopupShell>
+  );
+};
+
+const PCCSimpleBox = ({ title, subtitle, onClick }) => (
+  <div
+    onClick={onClick}
+    className="h-[145px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden px-4"
+  >
+    <h4 className="text-xl font-bold uppercase tracking-[0.05em] text-white">
+      {title}
+    </h4>
+
+    <span className="mt-1 text-[14px] text-slate-300 font-medium">
+      {subtitle}
+    </span>
+  </div>
 );
 
-const Wing2Popup = () => (
-  <PopupShell title="Wing 2 LT Distribution Flow">
-    <div className="relative w-full max-w-7xl mx-auto px-4 py-6 bg-white border border-slate-200 overflow-hidden">
-      <div className="relative w-full h-[560px]">
-
-        {/* PCC3 */}
-        <div className="absolute left-[3%] top-[60px] w-[30%] h-[210px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            PCC3
-          </div>
-
-          <div className="h-[125px]">
-            <div className="h-full bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]">
-              <span className="text-[10px] font-black text-blue-300 uppercase">
-                LT IN
-              </span>
-              <strong className="text-3xl font-black mt-2">
-                04
-              </strong>
-            </div>
-          </div>
+const PCCMainPopup = () => (
+  <PopupShell title="PCC Main Overview">
+    <div className="w-full max-w-6xl mx-auto px-6 py-10 overflow-hidden">
+      <div className="relative w-full h-[360px]">
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[280px]">
+          <PCCSimpleBox title="PCC" subtitle="Main LT Distribution" />
         </div>
 
-        {/* PCC4 */}
-        <div className="absolute left-[3%] top-[330px] w-[30%] h-[210px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            PCC4
-          </div>
-
-          <div className="h-[125px]">
-            <div className="h-full bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]">
-              <span className="text-[10px] font-black text-blue-300 uppercase">
-                LT IN
-              </span>
-              <strong className="text-3xl font-black mt-2">
-                03
-              </strong>
-            </div>
-          </div>
-        </div>
-
-        {/* DG INC */}
-        <div className="absolute right-[3%] top-[170px] w-[39%] h-[235px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
-          <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
-            DG INC
-          </div>
-
-          <div className="grid grid-cols-3 gap-5 h-[145px]">
-            {["5", "6", "7"].map((value) => (
-              <div
-                key={value}
-                className="bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex items-center justify-center text-3xl font-black shadow-[0_0_16px_rgba(0,74,173,0.35)]"
-              >
-                {value}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* FLOWS */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-10"
-          viewBox="0 0 1200 560"
+          className="absolute left-0 top-[145px] w-full h-[120px] overflow-visible pointer-events-none"
+          viewBox="0 0 1000 120"
           fill="none"
         >
           <defs>
             <marker
-              id="wing2-arrow"
-              viewBox="0 0 10 10"
-              refX="6"
+              id="pcc-wing-arrow"
+              viewBox="0 0 12 12"
+              refX="5"
               refY="5"
-              markerWidth="5"
-              markerHeight="5"
+              markerWidth="8"
+              markerHeight="8"
               orient="auto"
             >
-              <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+              <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
             </marker>
           </defs>
 
-          {/* DG to PCC3 */}
           <path
-  d="M 360 130 H 850 V 220"
-  stroke="#004AAD"
-  strokeWidth="3"
-  fill="none"
-/>
+            d="M500 0 V45 H250 V95"
+            stroke="#004AAD"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
 
-<path
-  d="M 360 130 H 850 V 220"
-  stroke="#00E5FF"
-  strokeWidth="3"
-  fill="none"
-  className="flow-path-right"
-  markerEnd="url(#wing2-arrow)"
-/>
-
-          {/* DG to PCC4 */}
-          <path d="M 820 310 V 455 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
           <path
-            d="M 820 310 V 455 H 360"
+            d="M500 45 H750 V95"
+            stroke="#004AAD"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          <path
+            d="M500 0 V45 H250 V95"
             stroke="#00E5FF"
             strokeWidth="3"
-            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="flow-path-left"
-            markerEnd="url(#wing2-arrow)"
+            markerEnd="url(#pcc-wing-arrow)"
+          />
+
+          <path
+            d="M500 45 H750 V95"
+            stroke="#00E5FF"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="flow-path-right"
+            markerEnd="url(#pcc-wing-arrow)"
           />
         </svg>
 
+        <div className="absolute left-[8%] top-[240px] w-[36%]">
+          <PCCSimpleBox
+            title="PCC 1 / PCC 2"
+            subtitle="Wing A"
+            onClick={() => setActivePopup("wing1")}
+          />
+        </div>
+
+        <div className="absolute right-[8%] top-[240px] w-[36%]">
+          <PCCSimpleBox
+            title="PCC 3 / PCC 4"
+            subtitle="Wing B"
+            onClick={() => setActivePopup("wing2")}
+          />
+        </div>
       </div>
     </div>
   </PopupShell>
 );
 
 
+const RaisingMainPopup = () => {
+  const [hoveredBox, setHoveredBox] = React.useState(null);
+
+  const RMBox = ({ id, title, subtitle, hover = false, tall = false }) => {
+    const isHovered = hoveredBox === id;
+
+    return (
+      <div
+        onMouseEnter={() => hover && setHoveredBox(id)}
+        onMouseLeave={() => hover && setHoveredBox(null)}
+        className={`relative ${
+          tall ? "h-[150px]" : "h-[95px]"
+        } w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden px-3`}
+      >
+        {hover && isHovered ? (
+          <div className="absolute inset-0 z-20 flex flex-col justify-center bg-[#081F5C] px-4">
+            {[
+              ["kWh", "1245"],
+              ["kVh", "1180"],
+              ["V", "433V"],
+              ["PF", "0.98"],
+              ["Amps", "210A"],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="flex justify-between text-[11px] leading-[21px]"
+              >
+                <span className="text-blue-200">{label}</span>
+                <span className="text-white">{value}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <h4 className="text-base font-bold uppercase tracking-[0.05em]">
+              {title}
+            </h4>
+            <span className="mt-1 text-[10px] text-slate-300 font-medium">
+              {subtitle}
+            </span>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <PopupShell
+      title="Raising Main Distribution"
+      onBack={() => setActivePopup(null)}
+    >
+      <div className="w-full max-w-6xl mx-auto px-6 py-6 overflow-visible">
+        <div className="relative w-full h-[520px] overflow-visible">
+
+          {/* MAIN RAISING MAIN */}
+          <div className="absolute left-1/2 top-[-15px] -translate-x-1/2 w-[280px]">
+            <RMBox
+              id="main-rm"
+              title="Raising Main"
+              subtitle="Main Vertical Distribution"
+            />
+          </div>
+
+          {/* FLOW: MAIN RAISING MAIN → WING A / WING B */}
+          <svg
+            className="absolute left-0 top-[80px] w-full h-[110px] overflow-visible pointer-events-none"
+            viewBox="0 0 1000 110"
+            fill="none"
+          >
+            <defs>
+              <marker
+                id="rm-arrow-1"
+                viewBox="0 0 10 10"
+                refX="4"
+                refY="5"
+                markerWidth="8"
+                markerHeight="8"
+                orient="auto"
+              >
+                <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
+              </marker>
+            </defs>
+
+            {[
+              "M500 0 V32 H250 V82",
+              "M500 32 H750 V82",
+            ].map((d, i) => (
+              <React.Fragment key={i}>
+                <path
+                  d={d}
+                  stroke="#004AAD"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={d}
+                  stroke="#00E5FF"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={i === 0 ? "flow-path-left" : "flow-path-right"}
+                  markerEnd="url(#rm-arrow-1)"
+                />
+              </React.Fragment>
+            ))}
+          </svg>
+
+          {/* WING A / WING B */}
+          <div className="absolute left-[9%] top-[175px] w-[34%]">
+            <RMBox
+              id="wing-a"
+              title="Wing A"
+              
+            />
+          </div>
+
+          <div className="absolute right-[9%] top-[175px] w-[34%]">
+            <RMBox
+              id="wing-b"
+              title="Wing B"
+             
+            />
+          </div>
+
+          {/* FLOW: WINGS → 2 + 2 RAISING MAINS */}
+          <svg
+            className="absolute left-0 top-[270px] w-full h-[95px] overflow-visible pointer-events-none"
+            viewBox="0 0 1000 95"
+            fill="none"
+          >
+            <defs>
+              <marker
+                id="rm-arrow-2"
+                viewBox="0 0 10 10"
+                refX="4"
+                refY="5"
+                markerWidth="8"
+                markerHeight="8"
+                orient="auto"
+              >
+                <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
+              </marker>
+            </defs>
+
+            {[
+              "M250 0 V32 H140 V76",
+              "M250 0 V32 H360 V76",
+              "M750 0 V32 H640 V76",
+              "M750 0 V32 H860 V76",
+            ].map((d, i) => (
+              <React.Fragment key={i}>
+                <path
+                  d={d}
+                  stroke="#004AAD"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={d}
+                  stroke="#00E5FF"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="flow-path-right"
+                  markerEnd="url(#rm-arrow-2)"
+                />
+              </React.Fragment>
+            ))}
+          </svg>
+
+          {/* FINAL 4 RAISING MAIN BOXES */}
+          <div className="absolute left-[6%] top-[350px] w-[18%]">
+            <RMBox
+              id="rm-a1"
+              title="Raising Main 1"
+              
+              hover
+              tall
+            />
+          </div>
+
+          <div className="absolute left-[30%] top-[350px] w-[18%]">
+            <RMBox
+              id="rm-a2"
+              title="Raising Main 2"
+              
+              hover
+              tall
+            />
+          </div>
+
+          <div className="absolute right-[30%] top-[350px] w-[18%]">
+            <RMBox
+              id="rm-b1"
+              title="Raising Main 3"
+             
+              hover
+              tall
+            />
+          </div>
+
+          <div className="absolute right-[6%] top-[350px] w-[18%]">
+            <RMBox
+              id="rm-b2"
+              title="Raising Main 4"
+              
+              hover
+              tall
+            />
+          </div>
+
+        </div>
+      </div>
+    </PopupShell>
+  );
+};
+
   return (
     <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
-      <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
+      {/* <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
         <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
           <div className="flex items-center gap-3">
             <img src={aiLogo} alt="AI Logo" className="h-28 w-28 object-contain -my-6" />
-            <h1 className="text-lg font-semibold tracking-tight text-white uppercase leading-none">BMS Command Control Overview</h1>
+            <h1 className="text-lg font-semibold tracking-tight text-white uppercase leading-none">ARCOT IIoT 1.0</h1>
           </div>
           <span className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1 text-[10px] font-bold tracking-wider text-white">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
-            SCADA CONNECTED
+            BLE CONNECTED
           </span>
         </div>
-      </header>
+      </header> */}
+<header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
+  <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
 
+    {/* LEFT */}
+   <div className="ml-1 flex flex-col justify-center">
+
+  <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
+    ARCOT
+    <span className="text-[#67E8F9] ml-2">
+      IIoT 1.0
+    </span>
+  </h1>
+
+  <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
+    Industrial Internet of Things
+  </span>
+
+</div>
+
+    {/* RIGHT */}
+    <div className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1.5 rounded-sm">
+      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+      <span className="text-[10px] font-bold tracking-[0.15em]">
+        BLE CONNECTED
+      </span>
+    </div>
+
+  </div>
+</header>
       
 
 <section className="w-full h-[calc(100vh-72px)] bg-slate-50 px-8 pt-2 pb-4 overflow-hidden">
@@ -2327,52 +2834,38 @@ const Wing2Popup = () => (
       </div>
     </div>
 
-    {/* ROW 2: BUSDUCT → WING 1 + TOP BUSBAR → WING 2 */}
-    <div className="relative mt-2">
+  {/* ROW 2: BUSDUCT → PCC → RAISING MAIN */}
+<div className="relative mt-2">
+  <div className="grid grid-cols-[1fr_70px_1fr_70px_1fr_70px_1fr] items-center">
 
-      {/* Top busbar from Busduct to Wing 2 */}
-      <div className="absolute left-[12.5%] right-[36.5%] -top-[18px] h-[18px] pointer-events-none">
-        <div className="absolute left-0 top-0 h-[18px]">
-          <FlowLineV />
-        </div>
+    <OverviewBox
+      title="Busduct"
+      subtitle="LT Busduct Distribution"
+      onClick={() => setActivePopup("busbars")}
+    />
 
-        <div className="absolute left-0 right-0 top-0">
-          <FlowLineH />
-        </div>
+    <FlowLineH />
 
-        <div className="absolute right-0 top-0 h-[18px]">
-          <FlowLineV />
-        </div>
-      </div>
+    <OverviewBox
+      title="PCC"
+      subtitle="Wing 1 + Wing 2"
+      onClick={() => setActivePopup("pccMain")}
+    />
 
-      <div className="grid grid-cols-[1fr_70px_1fr_70px_1fr_70px_1fr] items-center">
+    <FlowLineH />
 
-        <OverviewBox
-          title="Busduct"
-          subtitle="LT Busduct Distribution"
-          onClick={() => setActivePopup("busbars")}
-        />
+    <OverviewBox
+      title="Raising Main"
+      subtitle="Vertical Distribution"
+      onClick={() => setActivePopup("raisingMain")}
+    />
 
-        <FlowLineH />
+    <div />
+    <div />
 
-        <OverviewBox
-          title="Wing 1"
-          subtitle="20 Floors / 40 Zones"
-          onClick={() => setActivePopup("wing1")}
-        />
+  </div>
+</div>
 
-        <div />
-
-        <OverviewBox
-          title="Wing 2"
-          subtitle="20 Floors / 40 Zones"
-          onClick={() => setActivePopup("wing2")}
-        />
-
-        <div />
-        <div />
-      </div>
-    </div>
 
   </div>
 </section>
@@ -2386,9 +2879,10 @@ const Wing2Popup = () => (
       {activePopup === "transformers" && <TransformersPopup />}
       {activePopup === "kiosks" && <KioskPopup />}
       {activePopup === "busbars" && <BusbarPopup />}
-{activePopup === "wing1" && <Wing1Popup />}
-{activePopup === "wing2" && <Wing2Popup />}
-
+      {activePopup === "pccMain" && <PCCMainPopup />}
+{activePopup === "wing1" && <Pcc1Popup />}
+{activePopup === "wing2" && <Pcc2Popup />}
+{activePopup === "raisingMain" && <RaisingMainPopup />}
 
 
 
