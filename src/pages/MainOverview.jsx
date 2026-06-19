@@ -2944,12 +2944,12 @@ const BuildingsPopup = () => {
 
     {/* RIGHT */}
   <div className="flex items-center gap-3">
-  {/* <button
+  <button
     onClick={() => navigate("/overview")}
     className="h-[32px] px-4 bg-[#004AAD] border border-cyan-400 text-white text-[10px] font-black tracking-[0.15em] uppercase hover:bg-[#0058d6]"
   >
     Overview
-  </button> */}
+  </button>
 
   <div className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1.5 rounded-sm">
     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
@@ -3082,7 +3082,7 @@ const BuildingsPopup = () => {
 {activePopup === "raisingMain" && <RaisingMainPopup />}
 {activePopup === "buildings" && <BuildingsPopup />}
 
-{/* {activePopup === "overview" && <OverviewPopup />} */}
+{activePopup === "overview" && <OverviewPopup />}
 
 
       <footer className="bg-slate-100 border-t border-slate-200 py-6 px-6 text-slate-500 text-xs">

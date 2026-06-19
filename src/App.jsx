@@ -29,7 +29,7 @@ import MainOverview from "./pages/MainOverview";
 import BuildingOverview from "./pages/BuildingOverview";
 import FloorOverview from "./pages/FloorOverview";
 import ClientOverview from "./pages/ClientOverview";
-// import OverviewPage from "./pages/OverviewPage";
+import OverviewPage from "./pages/OverviewPage";
 import AuthPage from "./pages/AuthPage";
 
 function ProtectedRoute({ children }) {
@@ -79,14 +79,14 @@ export default function App() {
           }
         />
 
-        {/* <Route
+        <Route
           path="/overview"
           element={
             <ProtectedRoute>
               <OverviewPage />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
       </Routes>
     </BrowserRouter>
