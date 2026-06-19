@@ -779,12 +779,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Zap, ShieldAlert, X } from "lucide-react";
 import aiLogo from "../assets/AI LOGO.png";
+import { useNavigate } from "react-router-dom";
+import prestigeLogo from "../assets/ser-removebg.png";
 
 export default function MainOverview() {
   const [activePopup, setActivePopup] = useState(null);
   const [transformersExpanded, setTransformersExpanded] = useState(true);
   const [kiosksExpanded, setKiosksExpanded] = useState(true);
   const [busbarsExpanded, setBusbarsExpanded] = useState(true);
+
+const [openedBusbars, setOpenedBusbars] = useState([]);
+const navigate = useNavigate();
 
   const outgoing = [
     { name: "OG-1", transformer: "TR-1" },
@@ -961,9 +966,8 @@ const FlowLineV = () => (
 );
 
  const PopupShell = ({ title, children, onBack }) => (
-  <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5">
-    <div className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-slate-50 border-2 border-[#004AAD] rounded-xl shadow-2xl p-6 relative">
-      <div className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
+  <div className="fixed left-0 right-0 top-[72px] bottom-0 z z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-5">
+<div className="w-full max-w-7xl h-[calc(100vh-110px)] overflow-y-auto bg-slate-50 border-2 border-[#004AAD] rounded-xl shadow-2xl p-6 relative">      <div className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 pb-4 mb-6 flex items-center justify-between">
         <div>
           <span className="text-[10px] font-black tracking-[0.25em] uppercase text-[#004AAD]">
             BMS Detail View
@@ -1246,24 +1250,23 @@ const SourceBox = ({
 
   const handleHover = () => {
     if (!hoverMonitor) return;
-
     setOpenedBoxes((prev) => (prev.includes(id) ? prev : [...prev, id]));
   };
 
   return (
     <div
       onMouseEnter={handleHover}
-      className="relative h-[155px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
+      className="relative h-[135px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
     >
       {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           {icon && (
-            <div className="bg-[#05143C] p-2 border border-blue-900 mb-3">
+            <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
               <Zap className="h-4 w-4 text-emerald-400" />
             </div>
           )}
 
-          <h4 className="text-[17px] font-bold uppercase tracking-[0.05em] leading-none">
+          <h4 className="text-[16px] font-bold uppercase tracking-[0.05em] leading-none">
             {title}
           </h4>
 
@@ -1272,26 +1275,32 @@ const SourceBox = ({
           </span>
         </div>
       ) : (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-4">
-          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-2 mb-3">
-            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
-              Monitoring
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-2.5">
+          <div className="text-center border-b border-[#2B5DA8] pb-1.5 mb-1.5">
+            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.14em] leading-none">
+              {title}
+            </h4>
+          </div>
+
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[7px] font-bold text-blue-300 uppercase">
+              {subtitle}
             </span>
 
-            <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase">
+            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
               Live
             </span>
           </div>
 
-          <div className="px-2 space-y-1">
+          <div className="px-2 space-y-[2px]">
             {monitorData.map(([label, value]) => (
               <div key={label} className="flex items-center justify-between px-2">
-                <span className="text-[10px] font-medium text-slate-300 tracking-wide">
+                <span className="text-[9px] font-medium text-slate-300 tracking-wide">
                   {label}
                 </span>
 
-                <span className="text-[11px] font-bold text-white tabular-nums tracking-wide">
+                <span className="text-[10px] font-bold text-white tabular-nums tracking-wide">
                   {value}
                 </span>
               </div>
@@ -1308,10 +1317,9 @@ const SourcePopup = () => {
 
   return (
     <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
-      <div className="max-w-5xl mx-auto">
-        {/* SOURCE */}
+      <div className="max-w-6xl mx-auto pt-2 pb-4">
         <div className="flex justify-center">
-          <div className="w-[340px]">
+          <div className="w-[320px]">
             <SourceBox
               id="source"
               title="33kV SOURCE"
@@ -1323,20 +1331,17 @@ const SourcePopup = () => {
           </div>
         </div>
 
-        {/* SOURCE DOWN TO BUS */}
-        <div className="flex justify-center h-10">
+        <div className="flex justify-center h-8">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
           </div>
         </div>
 
-        {/* BUS FLOW BELOW SOURCE */}
-        <div className="relative h-[4px] w-[680px] mx-auto bg-cyan-400 overflow-hidden">
+        <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
           <div className="flow-pulse-horizontal" />
         </div>
 
-        {/* BUS TO INC1 / INC2 */}
-        <div className="relative h-14 w-[680px] mx-auto">
+        <div className="relative h-10 w-[760px] mx-auto">
           <div className="absolute left-0 top-0 h-full">
             <div className="flow-line-vertical h-full">
               <div className="flow-pulse-vertical" />
@@ -1350,8 +1355,7 @@ const SourcePopup = () => {
           </div>
         </div>
 
-        {/* INC1 - OUT - INC2 */}
-        <div className="grid grid-cols-[280px_60px_280px_60px_280px] items-center justify-center mx-auto">
+        <div className="grid grid-cols-[300px_55px_300px_55px_300px] items-center justify-center mx-auto">
           <SourceBox
             id="inc1"
             title="INC1"
@@ -1388,16 +1392,14 @@ const SourcePopup = () => {
           />
         </div>
 
-        {/* OUT TO METER */}
-        <div className="flex justify-center h-12">
+        <div className="flex justify-center h-8">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
           </div>
         </div>
 
-        {/* METER */}
         <div className="flex justify-center">
-          <div className="w-[340px]">
+          <div className="w-[320px]">
             <SourceBox
               id="meter"
               title="METER"
@@ -1409,16 +1411,14 @@ const SourcePopup = () => {
           </div>
         </div>
 
-        {/* METER TO FEEDER */}
-        <div className="flex justify-center h-12">
+        <div className="flex justify-center h-8">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
           </div>
         </div>
 
-        {/* FEEDER */}
         <div className="flex justify-center">
-          <div className="w-[340px]">
+          <div className="w-[320px]">
             <SourceBox
               id="feeder"
               title="33kV FEEDER"
@@ -1625,15 +1625,16 @@ const KioskMonitorBox = ({
   const showMonitor = openedKiosks.includes(id);
 
   const handleHover = () => {
-    setOpenedKiosks((prev) =>
-      prev.includes(id) ? prev : [...prev, id]
-    );
+    setOpenedKiosks((prev) => {
+      if (prev.includes(id)) return prev;
+      return [...prev, id];
+    });
   };
 
   return (
     <div
       onMouseEnter={handleHover}
-      className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[160px] overflow-hidden cursor-pointer"
+      className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[175px] overflow-hidden cursor-pointer"
     >
       {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
@@ -1650,10 +1651,20 @@ const KioskMonitorBox = ({
           </span>
         </div>
       ) : (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-4">
-          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-2 mb-3">
-            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+          <div className="text-center border-b border-[#2B5DA8] pb-2 mb-2">
+            <h4 className="text-[12px] font-black text-white uppercase tracking-[0.12em] leading-none">
+              {title}
+            </h4>
+
+            <span className="block mt-1 text-[7px] font-black tracking-[0.15em] text-blue-300 uppercase">
               Monitoring
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[7px] font-bold text-blue-300 uppercase">
+              {subtitle}
             </span>
 
             <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
@@ -1662,9 +1673,12 @@ const KioskMonitorBox = ({
             </span>
           </div>
 
-          <div className="px-2 space-y-[5px]">
+          <div className="px-2 space-y-[4px]">
             {monitorData.map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between px-1">
+              <div
+                key={label}
+                className="flex items-center justify-between px-1"
+              >
                 <span className="text-[10px] font-medium text-slate-300">
                   {label}
                 </span>
@@ -1802,7 +1816,7 @@ const BusbarMonitorBox = ({
   return (
     <div
       onMouseEnter={handleHover}
-      className="w-full h-[150px] bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow overflow-hidden cursor-pointer"
+      className="w-full h-[165px] bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow overflow-hidden cursor-pointer"
     >
       {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
@@ -1820,9 +1834,19 @@ const BusbarMonitorBox = ({
         </div>
       ) : (
         <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
-          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-3">
-            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
+          <div className="text-center border-b border-[#2B5DA8] pb-2 mb-2">
+            <h4 className="text-[12px] font-black text-white uppercase tracking-[0.12em] leading-none">
+              {title}
+            </h4>
+
+            <span className="block mt-1 text-[7px] font-black tracking-[0.15em] text-blue-300 uppercase">
               Busbar Status
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[7px] font-bold text-blue-300 uppercase">
+              Monitoring
             </span>
 
             <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
@@ -1831,10 +1855,9 @@ const BusbarMonitorBox = ({
             </span>
           </div>
 
-          <div className="px-2 space-y-[8px]">
+          <div className="px-2 space-y-[6px]">
             {monitorData.map(([label, value]) => {
-              const isOn = value === "ON";
-              const isNormal = value === "Normal";
+              const healthyValue = value === "ON" || value === "Normal";
 
               return (
                 <div
@@ -1847,7 +1870,7 @@ const BusbarMonitorBox = ({
 
                   <span
                     className={`text-[11px] font-bold tabular-nums ${
-                      isOn || isNormal ? "text-emerald-400" : "text-white"
+                      healthyValue ? "text-emerald-400" : "text-white"
                     }`}
                   >
                     {value}
@@ -2852,6 +2875,7 @@ const BuildingsPopup = () => {
 
 
   return (
+
     <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
       {/* <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
         <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
@@ -2865,33 +2889,85 @@ const BuildingsPopup = () => {
           </span>
         </div>
       </header> */}
-<header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
+
+
+<header className="sticky top-0 z-[1000] h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
   <div className="h-full mx-auto max-w-7xl flex justify-between items-center">
 
     {/* LEFT */}
-   <div className="ml-1 flex flex-col justify-center">
+    {/* <div
+      onClick={() => setActivePopup(null)}
+      className="ml-1 flex flex-col justify-center cursor-pointer"
+    >
+      <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
+        ARCOT
+        <span className="text-[#67E8F9] ml-2">
+          IIoT 1.0
+        </span>
+      </h1>
 
-  <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
-    ARCOT
-    <span className="text-[#67E8F9] ml-2">
-      IIoT 1.0
+      <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
+        Industrial Internet of Things
+      </span>
+    </div> */}
+
+    {/* LEFT */}
+<div
+  onClick={() => setActivePopup(null)}
+  className="ml-1 flex items-center cursor-pointer"
+>
+  <div className="flex flex-col justify-center">
+    <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
+      ARCOT
+      <span className="text-[#67E8F9] ml-2">
+        IIoT 1.0
+      </span>
+    </h1>
+
+    <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
+      Industrial Internet of Things
     </span>
-  </h1>
+  </div>
 
-  <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
-    Industrial Internet of Things
-  </span>
+  <div className="h-[58px] border-l border-[#004AAD] ml-5"></div>
+
+  <img
+  src={prestigeLogo}
+  alt="Prestige Group"
+  className="h-[60px] w-[110px] object-cover"
+/>
+ 
 
 </div>
 
-    {/* RIGHT */}
-    <div className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1.5 rounded-sm">
-      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
-      <span className="text-[10px] font-bold tracking-[0.15em]">
-        BLE CONNECTED
-      </span>
-    </div>
 
+
+    {/* RIGHT */}
+  <div className="flex items-center gap-3">
+  {/* <button
+    onClick={() => navigate("/overview")}
+    className="h-[32px] px-4 bg-[#004AAD] border border-cyan-400 text-white text-[10px] font-black tracking-[0.15em] uppercase hover:bg-[#0058d6]"
+  >
+    Overview
+  </button> */}
+
+  <div className="flex items-center gap-2 bg-[#05143C] border border-[#004AAD] px-3 py-1.5 rounded-sm">
+    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+    <span className="text-[10px] font-bold tracking-[0.15em]">
+      BLE CONNECTED
+    </span>
+  </div>
+
+  <button
+    onClick={() => {
+      localStorage.removeItem("bmsLoggedIn");
+      navigate("/auth");
+    }}
+    className="h-[32px] px-4 bg-red-600 border border-red-400 text-white text-[10px] font-black tracking-[0.15em] uppercase hover:bg-red-700"
+  >
+    Logout
+  </button>
+</div>
   </div>
 </header>
       
@@ -3006,7 +3082,7 @@ const BuildingsPopup = () => {
 {activePopup === "raisingMain" && <RaisingMainPopup />}
 {activePopup === "buildings" && <BuildingsPopup />}
 
-
+{/* {activePopup === "overview" && <OverviewPopup />} */}
 
 
       <footer className="bg-slate-100 border-t border-slate-200 py-6 px-6 text-slate-500 text-xs">
