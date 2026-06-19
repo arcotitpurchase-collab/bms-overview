@@ -1225,9 +1225,15 @@ const FlowLineV = () => (
 //   </PopupShell>
 // );
 
-const SourceBox = ({ title, subtitle, icon, hoverMonitor = false }) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-
+const SourceBox = ({
+  id,
+  title,
+  subtitle,
+  icon,
+  hoverMonitor = false,
+  openedBoxes,
+  setOpenedBoxes,
+}) => {
   const monitorData = [
     ["kWh", "1,280"],
     ["kVh", "1,195"],
@@ -1236,18 +1242,23 @@ const SourceBox = ({ title, subtitle, icon, hoverMonitor = false }) => {
     ["Current", "420 A"],
   ];
 
-  const showMonitor = hoverMonitor && isHovered;
+  const showMonitor = hoverMonitor && openedBoxes.includes(id);
+
+  const handleHover = () => {
+    if (!hoverMonitor) return;
+
+    setOpenedBoxes((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
 
   return (
     <div
-      onMouseEnter={() => hoverMonitor && setIsHovered(true)}
-      onMouseLeave={() => hoverMonitor && setIsHovered(false)}
-      className="relative h-[125px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
+      onMouseEnter={handleHover}
+      className="relative h-[155px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
     >
-      {!showMonitor && (
+      {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           {icon && (
-            <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
+            <div className="bg-[#05143C] p-2 border border-blue-900 mb-3">
               <Zap className="h-4 w-4 text-emerald-400" />
             </div>
           )}
@@ -1260,32 +1271,27 @@ const SourceBox = ({ title, subtitle, icon, hoverMonitor = false }) => {
             {subtitle}
           </span>
         </div>
-      )}
-
-      {showMonitor && (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-3">
-          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-1.5">
-            <span className="text-[7px] font-black tracking-[0.15em] text-blue-300 uppercase">
+      ) : (
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-4">
+          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-2 mb-3">
+            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
               Monitoring
             </span>
 
-            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
+            <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
               Live
             </span>
           </div>
 
-          <div className="px-2 pt-1 space-y-[3px]">
+          <div className="px-2 space-y-1">
             {monitorData.map(([label, value]) => (
-              <div
-                key={label}
-                className="flex items-center justify-between px-2"
-              >
-                <span className="text-[9px] font-medium text-slate-300 tracking-wide">
+              <div key={label} className="flex items-center justify-between px-2">
+                <span className="text-[10px] font-medium text-slate-300 tracking-wide">
                   {label}
                 </span>
 
-                <span className="text-[10px] font-bold text-white tabular-nums tracking-wide">
+                <span className="text-[11px] font-bold text-white tabular-nums tracking-wide">
                   {value}
                 </span>
               </div>
@@ -1297,94 +1303,136 @@ const SourceBox = ({ title, subtitle, icon, hoverMonitor = false }) => {
   );
 };
 
-const SourcePopup = () => (
-  <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
-    <div className="max-w-5xl mx-auto">
-      {/* SOURCE */}
-      <div className="flex justify-center">
-        <div className="w-[340px]">
+const SourcePopup = () => {
+  const [openedBoxes, setOpenedBoxes] = React.useState([]);
+
+  return (
+    <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
+      <div className="max-w-5xl mx-auto">
+        {/* SOURCE */}
+        <div className="flex justify-center">
+          <div className="w-[340px]">
+            <SourceBox
+              id="source"
+              title="33kV SOURCE"
+              subtitle="CENTRAL CONTROL PANEL"
+              icon
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+            />
+          </div>
+        </div>
+
+        {/* SOURCE DOWN TO BUS */}
+        <div className="flex justify-center h-10">
+          <div className="flow-line-vertical h-full">
+            <div className="flow-pulse-vertical" />
+          </div>
+        </div>
+
+        {/* BUS FLOW BELOW SOURCE */}
+        <div className="relative h-[4px] w-[680px] mx-auto bg-cyan-400 overflow-hidden">
+          <div className="flow-pulse-horizontal" />
+        </div>
+
+        {/* BUS TO INC1 / INC2 */}
+        <div className="relative h-14 w-[680px] mx-auto">
+          <div className="absolute left-0 top-0 h-full">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
+          </div>
+
+          <div className="absolute right-0 top-0 h-full">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
+          </div>
+        </div>
+
+        {/* INC1 - OUT - INC2 */}
+        <div className="grid grid-cols-[280px_60px_280px_60px_280px] items-center justify-center mx-auto">
           <SourceBox
-            title="33kV SOURCE"
-            subtitle="CENTRAL CONTROL PANEL"
-            icon
+            id="inc1"
+            title="INC1"
+            subtitle="FEEDER BREAKER"
+            hoverMonitor
+            openedBoxes={openedBoxes}
+            setOpenedBoxes={setOpenedBoxes}
+          />
+
+          <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
+            <div className="flow-pulse-horizontal" />
+          </div>
+
+          <SourceBox
+            id="out"
+            title="OUT"
+            subtitle="OUTGOING BUSBAR"
+            hoverMonitor
+            openedBoxes={openedBoxes}
+            setOpenedBoxes={setOpenedBoxes}
+          />
+
+          <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
+            <div className="flow-pulse-horizontal" />
+          </div>
+
+          <SourceBox
+            id="inc2"
+            title="INC2"
+            subtitle="FEEDER BREAKER"
+            hoverMonitor
+            openedBoxes={openedBoxes}
+            setOpenedBoxes={setOpenedBoxes}
           />
         </div>
-      </div>
 
-      {/* SOURCE DOWN TO BUS */}
-      <div className="flex justify-center h-10">
-        <div className="flow-line-vertical h-full">
-          <div className="flow-pulse-vertical" />
-        </div>
-      </div>
-
-      {/* BUS FLOW BELOW SOURCE */}
-      <div className="relative h-[4px] w-[680px] mx-auto bg-cyan-400 overflow-hidden">
-        <div className="flow-pulse-horizontal" />
-      </div>
-
-      {/* BUS TO INC1 / INC2 */}
-      <div className="relative h-14 w-[680px] mx-auto">
-        <div className="absolute left-0 top-0 h-full">
+        {/* OUT TO METER */}
+        <div className="flex justify-center h-12">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
           </div>
         </div>
 
-        <div className="absolute right-0 top-0 h-full">
+        {/* METER */}
+        <div className="flex justify-center">
+          <div className="w-[340px]">
+            <SourceBox
+              id="meter"
+              title="METER"
+              subtitle="METERING UNIT"
+              hoverMonitor
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+            />
+          </div>
+        </div>
+
+        {/* METER TO FEEDER */}
+        <div className="flex justify-center h-12">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
           </div>
         </div>
-      </div>
 
-      {/* INC1 - OUT - INC2 */}
-      <div className="grid grid-cols-[280px_60px_280px_60px_280px] items-center justify-center mx-auto">
-        <SourceBox title="INC1" subtitle="FEEDER BREAKER" hoverMonitor />
-
-        <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
-          <div className="flow-pulse-horizontal" />
-        </div>
-
-        <SourceBox title="OUT" subtitle="OUTGOING BUSBAR" hoverMonitor />
-
-        <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
-          <div className="flow-pulse-horizontal" />
-        </div>
-
-        <SourceBox title="INC2" subtitle="FEEDER BREAKER" hoverMonitor />
-      </div>
-
-      {/* OUT TO METER */}
-      <div className="flex justify-center h-12">
-        <div className="flow-line-vertical h-full">
-          <div className="flow-pulse-vertical" />
+        {/* FEEDER */}
+        <div className="flex justify-center">
+          <div className="w-[340px]">
+            <SourceBox
+              id="feeder"
+              title="33kV FEEDER"
+              subtitle="FEEDER SWITCHGEAR PANEL"
+              hoverMonitor
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+            />
+          </div>
         </div>
       </div>
-
-      {/* METER */}
-      <div className="flex justify-center">
-        <div className="w-[340px]">
-          <SourceBox title="METER" subtitle="METERING UNIT" hoverMonitor/>
-        </div>
-      </div>
-
-      {/* METER TO FEEDER */}
-      <div className="flex justify-center h-12">
-        <div className="flow-line-vertical h-full">
-          <div className="flow-pulse-vertical" />
-        </div>
-      </div>
-
-      {/* FEEDER */}
-      <div className="flex justify-center">
-        <div className="w-[340px]">
-          <SourceBox title="33kV FEEDER" subtitle="FEEDER SWITCHGEAR PANEL" />
-        </div>
-      </div>
-    </div>
-  </PopupShell>
-);
+    </PopupShell>
+  );
+};
 
   const FeederPopup = () => (
     <PopupShell title="33kV Feeder Panel">
@@ -1559,9 +1607,13 @@ const SourcePopup = () => (
   //   </PopupShell>
   // );
 
-const KioskMonitorBox = ({ title, subtitle }) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-
+const KioskMonitorBox = ({
+  id,
+  title,
+  subtitle,
+  openedKiosks,
+  setOpenedKiosks,
+}) => {
   const monitorData = [
     ["kWh", "1,280"],
     ["kVh", "1,195"],
@@ -1570,13 +1622,20 @@ const KioskMonitorBox = ({ title, subtitle }) => {
     ["Voltage", "433 V"],
   ];
 
+  const showMonitor = openedKiosks.includes(id);
+
+  const handleHover = () => {
+    setOpenedKiosks((prev) =>
+      prev.includes(id) ? prev : [...prev, id]
+    );
+  };
+
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[150px] overflow-hidden cursor-pointer"
+      onMouseEnter={handleHover}
+      className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[160px] overflow-hidden cursor-pointer"
     >
-      {!isHovered && (
+      {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
           <span className="text-[9px] font-black text-blue-300 uppercase tracking-wider">
             LT KIOSK
@@ -1590,11 +1649,9 @@ const KioskMonitorBox = ({ title, subtitle }) => {
             {subtitle}
           </span>
         </div>
-      )}
-
-      {isHovered && (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
-          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-2">
+      ) : (
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-4">
+          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-2 mb-3">
             <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
               Monitoring
             </span>
@@ -1605,12 +1662,9 @@ const KioskMonitorBox = ({ title, subtitle }) => {
             </span>
           </div>
 
-          <div className="px-2 space-y-[4px]">
+          <div className="px-2 space-y-[5px]">
             {monitorData.map(([label, value]) => (
-              <div
-                key={label}
-                className="flex items-center justify-between px-1"
-              >
+              <div key={label} className="flex items-center justify-between px-1">
                 <span className="text-[10px] font-medium text-slate-300">
                   {label}
                 </span>
@@ -1627,57 +1681,68 @@ const KioskMonitorBox = ({ title, subtitle }) => {
   );
 };
 
-const KioskPopup = () => (
-  <PopupShell title="LT Kiosk">
-    <div className="flex justify-center w-full my-3">
-      <div
-        onClick={() => setKiosksExpanded(!kiosksExpanded)}
-        className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-      >
-        <div className="h-full flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-            STEP-DOWN COMBINER PANEL
-          </span>
+const KioskPopup = () => {
+  const [openedKiosks, setOpenedKiosks] = React.useState([]);
 
-          <h3 className="text-lg font-black text-white tracking-wider mt-1">
-            LT KIOSK
-          </h3>
+  return (
+    <PopupShell title="LT Kiosk">
+      <div className="flex justify-center w-full my-3">
+        <div
+          onClick={() => setKiosksExpanded(!kiosksExpanded)}
+          className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+        >
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+              STEP-DOWN COMBINER PANEL
+            </span>
+
+            <h3 className="text-lg font-black text-white tracking-wider mt-1">
+              LT KIOSK
+            </h3>
+          </div>
         </div>
       </div>
-    </div>
 
-    {kiosksExpanded && (
-      <>
-        <div className="flex justify-center h-10">
-          <div className="flow-line-vertical h-full">
-            <div className="flow-pulse-vertical" />
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-            <div className="flow-pulse-horizontal" />
+      {kiosksExpanded && (
+        <>
+          <div className="flex justify-center h-10">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-6 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <div className="flow-line-vertical h-8">
-                  <div className="flow-pulse-vertical" />
-                </div>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+              <div className="flow-pulse-horizontal" />
+            </div>
 
-                <KioskMonitorBox
-                  title={`KIOSK-${index + 1}`}
-                  subtitle="433V PANEL"
-                />
-              </div>
-            ))}
+            <div className="grid grid-cols-6 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => {
+                const kioskId = `kiosk-${index + 1}`;
+
+                return (
+                  <div key={kioskId} className="flex flex-col items-center">
+                    <div className="flow-line-vertical h-8">
+                      <div className="flow-pulse-vertical" />
+                    </div>
+
+                    <KioskMonitorBox
+                      id={kioskId}
+                      title={`KIOSK-${index + 1}`}
+                      subtitle="433V PANEL"
+                      openedKiosks={openedKiosks}
+                      setOpenedKiosks={setOpenedKiosks}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </>
-    )}
-  </PopupShell>
-);
+        </>
+      )}
+    </PopupShell>
+  );
+};
 
 
   // const BusbarPopup = () => (
@@ -1714,22 +1779,32 @@ const KioskPopup = () => (
   //   </PopupShell>
   // );
 
-  const BusbarMonitorBox = ({ title }) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-
+const BusbarMonitorBox = ({
+  id,
+  title,
+  openedBusbars,
+  setOpenedBusbars,
+}) => {
   const monitorData = [
     ["Temp", "42°C"],
     ["Vibration", "Normal"],
     ["Health", "ON"],
   ];
 
+  const showMonitor = openedBusbars.includes(id);
+
+  const handleHover = () => {
+    setOpenedBusbars((prev) =>
+      prev.includes(id) ? prev : [...prev, id]
+    );
+  };
+
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleHover}
       className="w-full h-[150px] bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow overflow-hidden cursor-pointer"
     >
-      {!isHovered && (
+      {!showMonitor ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
           <span className="text-[9px] font-black text-blue-300 uppercase tracking-wider">
             LT BUSBAR
@@ -1743,9 +1818,7 @@ const KioskPopup = () => (
             433V
           </span>
         </div>
-      )}
-
-      {isHovered && (
+      ) : (
         <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
           <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-3">
             <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
@@ -1789,57 +1862,69 @@ const KioskPopup = () => (
   );
 };
 
-const BusbarPopup = () => (
-  <PopupShell title="LT Busduct / Busbar">
-    <div className="flex justify-center w-full my-3">
-      <div
-        onClick={() => setBusbarsExpanded(!busbarsExpanded)}
-        className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-      >
-        <div className="h-full flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-            POWER DISTRIBUTION
-          </span>
+const BusbarPopup = () => {
+  const [openedBusbars, setOpenedBusbars] = React.useState([]);
 
-          <h3 className="text-lg font-black text-white tracking-wider mt-1">
-            LT BUSDUCT / BUSBAR
-          </h3>
+  return (
+    <PopupShell title="LT Busduct / Busbar">
+      <div className="flex justify-center w-full my-3">
+        <div
+          onClick={() => setBusbarsExpanded(!busbarsExpanded)}
+          className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+        >
+          <div className="h-full flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+              POWER DISTRIBUTION
+            </span>
 
-          <span className="text-xs text-blue-300 mt-1">433V</span>
+            <h3 className="text-lg font-black text-white tracking-wider mt-1">
+              LT BUSDUCT / BUSBAR
+            </h3>
+
+            <span className="text-xs text-blue-300 mt-1">433V</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    {busbarsExpanded && (
-      <>
-        <div className="flex justify-center h-10">
-          <div className="flow-line-vertical h-full">
-            <div className="flow-pulse-vertical" />
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-            <div className="flow-pulse-horizontal" />
+      {busbarsExpanded && (
+        <>
+          <div className="flex justify-center h-10">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-6 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <div className="flow-line-vertical h-8">
-                  <div className="flow-pulse-vertical" />
-                </div>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+              <div className="flow-pulse-horizontal" />
+            </div>
 
-                <BusbarMonitorBox title={`BUS-${index + 1}`} />
-              </div>
-            ))}
+            <div className="grid grid-cols-6 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => {
+                const busbarId = `bus-${index + 1}`;
+
+                return (
+                  <div key={busbarId} className="flex flex-col items-center">
+                    <div className="flow-line-vertical h-8">
+                      <div className="flow-pulse-vertical" />
+                    </div>
+
+                    <BusbarMonitorBox
+                      id={busbarId}
+                      title={`BUS-${index + 1}`}
+                      openedBusbars={openedBusbars}
+                      setOpenedBusbars={setOpenedBusbars}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </>
-    )}
-  </PopupShell>
-);
-
+        </>
+      )}
+    </PopupShell>
+  );
+};
 
 // const Pcc1Popup = () => (
 //   <PopupShell title="Wing 1 LT Distribution Flow">
@@ -2010,7 +2095,7 @@ const BusbarPopup = () => (
 
 
 const Pcc1Popup = () => {
-  const [hoveredPanel, setHoveredPanel] = React.useState(null);
+  const [openedPanels, setOpenedPanels] = React.useState([]);
 
   const pcc1Panels = [
     { name: "LT6\nIN", arrow: "down" },
@@ -2069,89 +2154,54 @@ const Pcc1Popup = () => {
 
       {type === "down" && (
         <>
-          <path
-            d="M 50 0 V 48"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 50 0 V 48"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-right"
-            markerEnd={`url(#arrow-wing-${id})`}
-          />
+          <path d="M 50 0 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 50 0 V 48" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing-${id})`} />
         </>
       )}
 
       {type === "up" && (
         <>
-          <path
-            d="M 50 48 V 0"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 50 48 V 0"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-left"
-            markerEnd={`url(#arrow-wing-${id})`}
-          />
+          <path d="M 50 48 V 0" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 50 48 V 0" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing-${id})`} />
         </>
       )}
 
       {type === "both" && (
         <>
-          <path
-            d="M 18 24 H 82"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 18 24 H 82"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-right"
-            markerEnd={`url(#arrow-wing-${id})`}
-          />
-          <path
-            d="M 82 24 H 18"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-left"
-            markerEnd={`url(#arrow-wing-${id})`}
-          />
+          <path d="M 18 24 H 82" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 18 24 H 82" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing-${id})`} />
+          <path d="M 82 24 H 18" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing-${id})`} />
         </>
       )}
     </svg>
   );
 
-  const PanelFeatures = () => (
-    <div className="absolute inset-0 z-30 flex flex-col justify-center bg-[#081F5C] px-2">
-      <div className="flex justify-between text-[11px] leading-[15px]">
+  const PanelFeatures = ({ heading }) => (
+    <div className="absolute inset-0 z-30 bg-[#081F5C] px-2 py-2">
+      <div className="text-center text-[9px] font-black text-blue-300 uppercase tracking-wide leading-tight border-b border-[#2B5DA8] pb-1 mb-1 whitespace-pre-line">
+        {heading}
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">kWh</span>
         <span className="text-white">1245</span>
       </div>
+
       <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">kVh</span>
         <span className="text-white">1180</span>
       </div>
+
       <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">V</span>
         <span className="text-white">433V</span>
       </div>
+
       <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">PF</span>
         <span className="text-white">0.98</span>
       </div>
+
       <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">Amps</span>
         <span className="text-white">210A</span>
@@ -2168,22 +2218,22 @@ const Pcc1Popup = () => {
       <div className="absolute left-0 top-[45px] w-full h-[150px] flex items-stretch z-20">
         {rowPanels.map((panel, index) => {
           const panelId = `${title}-${index}`;
-          const isHovered = hoveredPanel === panelId;
+          const isOpened = openedPanels.includes(panelId);
 
           return (
             <div
               key={`${title}-${panel.name}-${index}`}
-              onMouseEnter={() => setHoveredPanel(panelId)}
-              onMouseLeave={() => setHoveredPanel(null)}
+              onMouseEnter={() =>
+                setOpenedPanels((prev) =>
+                  prev.includes(panelId) ? prev : [...prev, panelId]
+                )
+              }
               className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
             >
-              <FlowArrow
-                type={panel.arrow}
-                id={`${title.replace(/\s/g, "")}-${index}`}
-              />
+              <FlowArrow type={panel.arrow} id={`${title.replace(/\s/g, "")}-${index}`} />
 
-              {isHovered ? (
-                <PanelFeatures />
+              {isOpened ? (
+                <PanelFeatures heading={panel.name} />
               ) : (
                 <div className="absolute inset-0 z-20 flex items-center justify-center px-1">
                   <span className="text-[14px] md:text-[12px] font-semibold leading-tight text-center whitespace-pre-line">
@@ -2199,23 +2249,19 @@ const Pcc1Popup = () => {
   );
 
   return (
-   <PopupShell
-  title="Wing 1 LT Distribution Flow"
-  onBack={() => setActivePopup("pccMain")}
->
-  <div className="w-full max-w-[1600px] mx-auto px-4 py-6 overflow-visible">
-    <div className="relative w-full h-[520px] overflow-visible">
-      <PCCRow title="PCC 1" top="top-[25px]" rowPanels={pcc1Panels} />
-      <PCCRow title="PCC 2" top="top-[285px]" rowPanels={pcc2Panels} />
-    </div>
-  </div>
-</PopupShell>
+    <PopupShell title="Wing 1 LT Distribution Flow" onBack={() => setActivePopup("pccMain")}>
+      <div className="w-full max-w-[1600px] mx-auto px-4 py-6 overflow-visible">
+        <div className="relative w-full h-[520px] overflow-visible">
+          <PCCRow title="PCC 1" top="top-[25px]" rowPanels={pcc1Panels} />
+          <PCCRow title="PCC 2" top="top-[285px]" rowPanels={pcc2Panels} />
+        </div>
+      </div>
+    </PopupShell>
   );
 };
 
-
 const Pcc2Popup = () => {
-  const [hoveredPanel, setHoveredPanel] = React.useState(null);
+  const [openedPanels, setOpenedPanels] = React.useState([]);
 
   const pcc3Panels = [
     { name: "LT4\nIN", arrow: "down" },
@@ -2270,74 +2316,35 @@ const Pcc2Popup = () => {
 
       {type === "down" && (
         <>
-          <path
-            d="M 50 0 V 48"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 50 0 V 48"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-right"
-            markerEnd={`url(#arrow-wing2-${id})`}
-          />
+          <path d="M 50 0 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 50 0 V 48" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing2-${id})`} />
         </>
       )}
 
       {type === "up" && (
         <>
-          <path
-            d="M 50 48 V 0"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 50 48 V 0"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-left"
-            markerEnd={`url(#arrow-wing2-${id})`}
-          />
+          <path d="M 50 48 V 0" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 50 48 V 0" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing2-${id})`} />
         </>
       )}
 
       {type === "both" && (
         <>
-          <path
-            d="M 18 24 H 82"
-            stroke="#004AAD"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 18 24 H 82"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-right"
-            markerEnd={`url(#arrow-wing2-${id})`}
-          />
-          <path
-            d="M 82 24 H 18"
-            stroke="#00E5FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flow-path-left"
-            markerEnd={`url(#arrow-wing2-${id})`}
-          />
+          <path d="M 18 24 H 82" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 18 24 H 82" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing2-${id})`} />
+          <path d="M 82 24 H 18" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing2-${id})`} />
         </>
       )}
     </svg>
   );
 
-  const PanelFeatures = () => (
-    <div className="absolute inset-0 z-30 flex flex-col justify-center bg-[#081F5C] px-2">
-      <div className="flex justify-between text-[12px] leading-[15px]">
+  const PanelFeatures = ({ heading }) => (
+    <div className="absolute inset-0 z-30 bg-[#081F5C] px-2 py-2">
+      <div className="text-center text-[9px] font-black text-blue-300 uppercase tracking-wide leading-tight border-b border-[#2B5DA8] pb-1 mb-1 whitespace-pre-line">
+        {heading}
+      </div>
+
+      <div className="flex justify-between text-[9px] leading-[15px]">
         <span className="text-blue-200">kWh</span>
         <span className="text-white">1245</span>
       </div>
@@ -2373,22 +2380,22 @@ const Pcc2Popup = () => {
       <div className="absolute left-0 top-[45px] w-full h-[150px] flex items-stretch z-20">
         {rowPanels.map((panel, index) => {
           const panelId = `${title}-${index}`;
-          const isHovered = hoveredPanel === panelId;
+          const isOpened = openedPanels.includes(panelId);
 
           return (
             <div
               key={`${title}-${panel.name}-${index}`}
-              onMouseEnter={() => setHoveredPanel(panelId)}
-              onMouseLeave={() => setHoveredPanel(null)}
+              onMouseEnter={() =>
+                setOpenedPanels((prev) =>
+                  prev.includes(panelId) ? prev : [...prev, panelId]
+                )
+              }
               className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
             >
-              <FlowArrow
-                type={panel.arrow}
-                id={`${title.replace(/\s/g, "")}-${index}`}
-              />
+              <FlowArrow type={panel.arrow} id={`${title.replace(/\s/g, "")}-${index}`} />
 
-              {isHovered ? (
-                <PanelFeatures />
+              {isOpened ? (
+                <PanelFeatures heading={panel.name} />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center px-1">
                   <span className="text-[14px] md:text-[12px] font-semibold leading-tight text-center whitespace-pre-line">
@@ -2404,10 +2411,7 @@ const Pcc2Popup = () => {
   );
 
   return (
-    <PopupShell
-  title="Wing 2 LT Distribution Flow"
-  onBack={() => setActivePopup("pccMain")}
->
+    <PopupShell title="Wing 2 LT Distribution Flow" onBack={() => setActivePopup("pccMain")}>
       <div className="w-full max-w-7xl mx-auto px-4 py-6 overflow-visible">
         <div className="relative w-full h-[520px] overflow-visible">
           <PCCRow title="PCC 3" top="top-[25px]" rowPanels={pcc3Panels} />
@@ -2519,31 +2523,44 @@ const PCCMainPopup = () => (
 
 
 const RaisingMainPopup = () => {
-  const [hoveredBox, setHoveredBox] = React.useState(null);
+  const [openedBoxes, setOpenedBoxes] = React.useState([]);
 
   const RMBox = ({ id, title, subtitle, hover = false, tall = false }) => {
-    const isHovered = hoveredBox === id;
+    const isOpened = openedBoxes.includes(id);
+
+    const monitorData = [
+      ["kWh", "1245"],
+      ["kVh", "1180"],
+      ["V", "433V"],
+      ["PF", "0.98"],
+      ["Amps", "210A"],
+    ];
+
+    const handleHover = () => {
+      if (!hover) return;
+
+      setOpenedBoxes((prev) =>
+        prev.includes(id) ? prev : [...prev, id]
+      );
+    };
 
     return (
       <div
-        onMouseEnter={() => hover && setHoveredBox(id)}
-        onMouseLeave={() => hover && setHoveredBox(null)}
+        onMouseEnter={handleHover}
         className={`relative ${
           tall ? "h-[150px]" : "h-[95px]"
         } w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden px-3`}
       >
-        {hover && isHovered ? (
-          <div className="absolute inset-0 z-20 flex flex-col justify-center bg-[#081F5C] px-4">
-            {[
-              ["kWh", "1245"],
-              ["kVh", "1180"],
-              ["V", "433V"],
-              ["PF", "0.98"],
-              ["Amps", "210A"],
-            ].map(([label, value]) => (
+        {hover && isOpened ? (
+          <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+            <div className="text-center text-[9px] font-black text-blue-300 uppercase tracking-wide border-b border-[#2B5DA8] pb-1 mb-2">
+              {title}
+            </div>
+
+            {monitorData.map(([label, value]) => (
               <div
                 key={label}
-                className="flex justify-between text-[11px] leading-[21px]"
+                className="flex justify-between text-[11px] leading-[20px]"
               >
                 <span className="text-blue-200">{label}</span>
                 <span className="text-white">{value}</span>
@@ -2555,6 +2572,7 @@ const RaisingMainPopup = () => {
             <h4 className="text-base font-bold uppercase tracking-[0.05em]">
               {title}
             </h4>
+
             <span className="mt-1 text-[10px] text-slate-300 font-medium">
               {subtitle}
             </span>
@@ -2571,7 +2589,6 @@ const RaisingMainPopup = () => {
     >
       <div className="w-full max-w-6xl mx-auto px-6 py-6 overflow-visible">
         <div className="relative w-full h-[520px] overflow-visible">
-
           {/* MAIN RAISING MAIN */}
           <div className="absolute left-1/2 top-[-15px] -translate-x-1/2 w-[280px]">
             <RMBox
@@ -2601,10 +2618,7 @@ const RaisingMainPopup = () => {
               </marker>
             </defs>
 
-            {[
-              "M500 0 V32 H250 V82",
-              "M500 32 H750 V82",
-            ].map((d, i) => (
+            {["M500 0 V32 H250 V82", "M500 32 H750 V82"].map((d, i) => (
               <React.Fragment key={i}>
                 <path
                   d={d}
@@ -2628,19 +2642,11 @@ const RaisingMainPopup = () => {
 
           {/* WING A / WING B */}
           <div className="absolute left-[9%] top-[175px] w-[34%]">
-            <RMBox
-              id="wing-a"
-              title="Wing A"
-              
-            />
+            <RMBox id="wing-a" title="Wing A" />
           </div>
 
           <div className="absolute right-[9%] top-[175px] w-[34%]">
-            <RMBox
-              id="wing-b"
-              title="Wing B"
-             
-            />
+            <RMBox id="wing-b" title="Wing B" />
           </div>
 
           {/* FLOW: WINGS → 2 + 2 RAISING MAINS */}
@@ -2692,50 +2698,26 @@ const RaisingMainPopup = () => {
 
           {/* FINAL 4 RAISING MAIN BOXES */}
           <div className="absolute left-[6%] top-[350px] w-[18%]">
-            <RMBox
-              id="rm-a1"
-              title="Raising Main 1"
-              
-              hover
-              tall
-            />
+            <RMBox id="rm-a1" title="Raising Main 1" hover tall />
           </div>
 
           <div className="absolute left-[30%] top-[350px] w-[18%]">
-            <RMBox
-              id="rm-a2"
-              title="Raising Main 2"
-              
-              hover
-              tall
-            />
+            <RMBox id="rm-a2" title="Raising Main 2" hover tall />
           </div>
 
           <div className="absolute right-[30%] top-[350px] w-[18%]">
-            <RMBox
-              id="rm-b1"
-              title="Raising Main 3"
-             
-              hover
-              tall
-            />
+            <RMBox id="rm-b1" title="Raising Main 3" hover tall />
           </div>
 
           <div className="absolute right-[6%] top-[350px] w-[18%]">
-            <RMBox
-              id="rm-b2"
-              title="Raising Main 4"
-              
-              hover
-              tall
-            />
+            <RMBox id="rm-b2" title="Raising Main 4" hover tall />
           </div>
-
         </div>
       </div>
     </PopupShell>
   );
 };
+
 
 const BuildingsPopup = () => {
  const BuildingBox = ({ title, subtitle, onClick, showIcon = false }) => (
